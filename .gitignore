@@ -1,15 +1,39 @@
+# Built application packages and binaries
+*.apk
+*.aab
+*.aar
+*.dex
+*.class
+
+# Log files
+*.log
+
+# Android Studio / IntelliJ IDEA
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.gradletasknamecache
+
+# Build & Cache directories
+.gradle/
+/build/
+*/build/
+.kotlin/
+
+# Native build outputs
+.externalNativeBuild/
+.cxx/
+cmake-build-*/
+
+# Local configuration & sensitive files (SDK paths, passwords, keys)
 local.properties
+*.jks
+*.keystore
+*.p12
+*.pepk
+secrets.properties
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
