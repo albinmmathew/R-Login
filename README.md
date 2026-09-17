@@ -66,7 +66,7 @@ com.example.sampleproject_rlogin/
 ### Steps
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/SampleProject_Rlogin.git
+   git clone https://github.com/albinmmathew/R-Login.git
    ```
 2. Open the project in **Android Studio**.
 3. Let Gradle sync and resolve project dependencies.
