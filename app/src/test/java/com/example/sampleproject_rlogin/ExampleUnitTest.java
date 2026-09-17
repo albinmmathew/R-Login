@@ -1,4 +1,4 @@
-package com.example.r_login;
+package com.example.sampleproject_rlogin;
 
 import org.junit.Test;
 

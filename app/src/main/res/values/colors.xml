@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="navy_primary">#002868</color>
+    <color name="navy_on_primary">#FFFFFF</color>
+    <color name="navy_primary_container">#E8EEF5</color>
+    <color name="navy_on_primary_container">#002868</color>
 </resources>

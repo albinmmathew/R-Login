@@ -1,9 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.RLogin" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.SampleProject_Rlogin" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/navy_primary</item>
+        <item name="colorOnPrimary">@color/navy_on_primary</item>
+        <item name="colorPrimaryContainer">@color/navy_primary</item>
+        <item name="colorOnPrimaryContainer">#FFFFFF</item>
+
+        <item name="colorOnSurface">#002868</item>
+        <item name="colorOnSurfaceVariant">#555555</item>
+
+        <!-- Status Bar Configuration -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.RLogin" parent="Base.Theme.RLogin" />
+    <style name="Theme.SampleProject_Rlogin" parent="Base.Theme.SampleProject_Rlogin" />
 </resources>
