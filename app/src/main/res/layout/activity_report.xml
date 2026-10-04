@@ -31,15 +31,7 @@
             android:layout_height="wrap_content"
             app:singleSelection="true"
             app:selectionRequired="true"
-            app:checkedButton="@id/btn_without_od">
-
-            <Button
-                android:id="@+id/btn_without_od"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Without OD" />
+            app:checkedButton="@id/btn_with_od">
 
             <Button
                 android:id="@+id/btn_with_od"
@@ -48,6 +40,14 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="With Duty Leave (OD)" />
+
+            <Button
+                android:id="@+id/btn_without_od"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Without OD" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
     </LinearLayout>
