@@ -8,12 +8,16 @@ android {
         version = release(37)
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.example.rlogin"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

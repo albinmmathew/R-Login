@@ -28,9 +28,9 @@ import java.util.concurrent.Executors;
 
 public class GitHubUpdater {
     private static final String GITHUB_RELEASES_API = "https://api.github.com/repos/albinmmathew/R-Login/releases/latest";
-    private static final String CURRENT_VERSION = "1.0";
 
     public static void checkForUpdates(Context context, boolean showToastIfLatest) {
+        String currentVersion = BuildConfig.VERSION_NAME;
         if (showToastIfLatest) {
             Toast.makeText(context, "Checking for updates...", Toast.LENGTH_SHORT).show();
         }
@@ -75,14 +75,14 @@ public class GitHubUpdater {
                     final String finalApkUrl = apkDownloadUrl;
                     String latestVersion = tagName.replaceAll("[^0-9.]", "");
 
-                    if (isNewerVersion(latestVersion, CURRENT_VERSION) && finalApkUrl != null) {
+                    if (isNewerVersion(latestVersion, currentVersion) && finalApkUrl != null) {
                         if (context instanceof MainActivity) {
                             ((MainActivity) context).runOnUiThread(() -> showUpdateDialog(context, tagName, body, finalApkUrl));
                         }
                     } else if (showToastIfLatest) {
                         if (context instanceof MainActivity) {
                             ((MainActivity) context).runOnUiThread(() ->
-                                    Toast.makeText(context, "You are on the latest version (" + CURRENT_VERSION + ")", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "You are on the latest version (" + currentVersion + ")", Toast.LENGTH_SHORT).show()
                             );
                         }
                     }
