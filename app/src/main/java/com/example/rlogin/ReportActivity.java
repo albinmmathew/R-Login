@@ -1,4 +1,4 @@
-package com.example.sampleproject_rlogin;
+package com.example.rlogin;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -28,6 +28,7 @@ public class ReportActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ReportAdapter adapter;
     private boolean autoLoggedIn = false;
+    private boolean scraped = false;
 
     public class Bridge {
         @JavascriptInterface
@@ -62,6 +63,10 @@ public class ReportActivity extends AppCompatActivity {
 
         MaterialButtonToggleGroup toggleGroup = findViewById(R.id.toggle_group);
         if (toggleGroup != null) {
+            toggleGroup.setEnabled(false); // Freeze toggle group until report loads
+            for (int idx = 0; idx < toggleGroup.getChildCount(); idx++) {
+                toggleGroup.getChildAt(idx).setEnabled(false);
+            }
             toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
                 if (isChecked && adapter != null) {
                     adapter.setShowDutyLeave(checkedId == R.id.btn_with_od);
@@ -160,7 +165,10 @@ public class ReportActivity extends AppCompatActivity {
                 }
 
                 if (loadedUrl != null && loadedUrl.contains("attendance_reports")) {
-                    view.evaluateJavascript(scrapeJs, null);
+                    if (!scraped) {
+                        scraped = true;
+                        view.evaluateJavascript(scrapeJs, null);
+                    }
                 }
             }
         });
@@ -207,6 +215,15 @@ public class ReportActivity extends AppCompatActivity {
                 recyclerView.setVisibility(View.VISIBLE);
                 adapter = new ReportAdapter(list);
                 recyclerView.setAdapter(adapter);
+
+                // Enable toggle switch once report is fully loaded
+                MaterialButtonToggleGroup toggleGroup = findViewById(R.id.toggle_group);
+                if (toggleGroup != null) {
+                    toggleGroup.setEnabled(true);
+                    for (int idx = 0; idx < toggleGroup.getChildCount(); idx++) {
+                        toggleGroup.getChildAt(idx).setEnabled(true);
+                    }
+                }
             } else {
                 progressBar.setVisibility(View.GONE);
                 txtLoading.setText("No attendance records found.");

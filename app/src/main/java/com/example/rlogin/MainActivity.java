@@ -1,15 +1,21 @@
-package com.example.sampleproject_rlogin;
+package com.example.rlogin;
 
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class MainActivity extends AppCompatActivity {
     Db db;
@@ -25,6 +31,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
+
         db = new Db(this);
 
         setup("WIFI", R.id.status_wifi, R.id.btn_edit_wifi, R.id.c_wifi, null);
@@ -45,6 +57,24 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             });
         }
+
+        // Silent check for updates in background on launch
+        GitHubUpdater.checkForUpdates(this, false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_check_updates) {
+            GitHubUpdater.checkForUpdates(this, true);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

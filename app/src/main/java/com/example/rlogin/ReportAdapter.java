@@ -1,4 +1,4 @@
-package com.example.sampleproject_rlogin;
+package com.example.rlogin;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder> {
     private final List<SubjectItem> items;
-    private boolean showDutyLeave = false;
+    private boolean showDutyLeave = true; // Default: With OD first!
 
     public ReportAdapter(List<SubjectItem> items) {
         this.items = items;

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SampleProject_Rlogin"
+rootProject.name = "R-Login"
 include(":app")
  

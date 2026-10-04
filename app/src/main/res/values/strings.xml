@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">R-Login</string>
+    <string name="action_check_updates">Check for Updates</string>
 </resources>
