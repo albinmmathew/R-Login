@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.r_login"
+    namespace = "com.example.sampleproject_rlogin"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.r_login"
+        applicationId = "com.example.sampleproject_rlogin"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

@@ -1,7 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.RLogin" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <!-- Base application theme for Dark Mode. -->
+    <style name="Base.Theme.SampleProject_Rlogin" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#80A3D9</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">@color/navy_primary</item>
+        <item name="colorOnPrimaryContainer">#FFFFFF</item>
+
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorOnSurfaceVariant">#CCCCCC</item>
+
+        <!-- Dark Mode Status Bar Configuration -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">#002868</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
