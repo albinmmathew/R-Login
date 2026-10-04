@@ -31,7 +31,7 @@ R-Login is an Android application designed for Rajagiri College students. It cen
 ## Project Architecture
 
 ```text
-com.example.sampleproject_rlogin/
+com.example.rlogin/
 ├── MainActivity.java     # Main Dashboard with Material 3 Service Cards & Status Badges
 ├── EditActivity.java     # Credential Vault screen with Outlined Text Inputs & Eye Toggle
 ├── WebActivity.java      # Integrated Browser Activity with Top Toolbar & Chrome launcher

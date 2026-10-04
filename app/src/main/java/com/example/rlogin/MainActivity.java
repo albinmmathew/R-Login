@@ -1,4 +1,4 @@
-package com.example.sampleproject_rlogin;
+package com.example.rlogin;
 
 import android.content.Intent;
 import android.content.res.Configuration;
