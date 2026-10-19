@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
         }
 
         db = new Db(this);
@@ -52,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 Intent i = new Intent(this, ReportActivity.class);
+                i.putExtra("user", saved[0]);
+                i.putExtra("pass", Crypt.dec(saved[1]));
+                startActivity(i);
+            });
+        }
+
+        Button rLms = findViewById(R.id.r_lms);
+        if (rLms != null) {
+            rLms.setOnClickListener(v -> {
+                String[] saved = db.get("LMS");
+                if (saved == null || saved[0].isEmpty() || saved[1].isEmpty()) {
+                    Toast.makeText(this, "Setup LMS credentials first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent i = new Intent(this, AssignmentActivity.class);
                 i.putExtra("user", saved[0]);
                 i.putExtra("pass", Crypt.dec(saved[1]));
                 startActivity(i);
