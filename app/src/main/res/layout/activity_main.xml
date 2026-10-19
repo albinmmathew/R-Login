@@ -263,13 +263,31 @@
                             android:contentDescription="Edit LMS" />
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/c_lms"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:textColor="#FFFFFF"
-                        android:text="Open" />
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp">
+
+                        <Button
+                            android:id="@+id/c_lms"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/colorOnSurface"
+                            app:strokeColor="?attr/colorOnSurface"
+                            android:text="Open" />
+
+                        <Button
+                            android:id="@+id/r_lms"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="#FFFFFF"
+                            android:text="Assignments" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

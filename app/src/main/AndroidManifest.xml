@@ -31,6 +31,7 @@
         <activity android:name=".WebActivity" />
         <activity android:name=".EditActivity" />
         <activity android:name=".ReportActivity" />
+        <activity android:name=".AssignmentActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

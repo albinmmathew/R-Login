@@ -61,6 +61,21 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        Button rLms = findViewById(R.id.r_lms);
+        if (rLms != null) {
+            rLms.setOnClickListener(v -> {
+                String[] saved = db.get("LMS");
+                if (saved == null || saved[0].isEmpty() || saved[1].isEmpty()) {
+                    Toast.makeText(this, "Setup LMS credentials first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent i = new Intent(this, AssignmentActivity.class);
+                i.putExtra("user", saved[0]);
+                i.putExtra("pass", Crypt.dec(saved[1]));
+                startActivity(i);
+            });
+        }
+
         // Silent check for updates in background on launch
         GitHubUpdater.checkForUpdates(this, false);
     }
