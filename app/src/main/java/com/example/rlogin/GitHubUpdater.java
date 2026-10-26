@@ -1,5 +1,6 @@
 package com.example.rlogin;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -76,19 +77,19 @@ public class GitHubUpdater {
                     String latestVersion = tagName.replaceAll("[^0-9.]", "");
 
                     if (isNewerVersion(latestVersion, currentVersion) && finalApkUrl != null) {
-                        if (context instanceof MainActivity) {
-                            ((MainActivity) context).runOnUiThread(() -> showUpdateDialog(context, tagName, body, finalApkUrl));
+                        if (context instanceof Activity) {
+                            ((Activity) context).runOnUiThread(() -> showUpdateDialog(context, tagName, body, finalApkUrl));
                         }
                     } else if (showToastIfLatest) {
-                        if (context instanceof MainActivity) {
-                            ((MainActivity) context).runOnUiThread(() ->
+                        if (context instanceof Activity) {
+                            ((Activity) context).runOnUiThread(() ->
                                     Toast.makeText(context, "You are on the latest version (" + currentVersion + ")", Toast.LENGTH_SHORT).show()
                             );
                         }
                     }
                 } else if (showToastIfLatest) {
-                    if (context instanceof MainActivity) {
-                        ((MainActivity) context).runOnUiThread(() ->
+                    if (context instanceof Activity) {
+                        ((Activity) context).runOnUiThread(() ->
                                 Toast.makeText(context, "Unable to check for updates right now.", Toast.LENGTH_SHORT).show()
                         );
                     }
@@ -96,8 +97,8 @@ public class GitHubUpdater {
                 conn.disconnect();
             } catch (Exception e) {
                 if (showToastIfLatest) {
-                    if (context instanceof MainActivity) {
-                        ((MainActivity) context).runOnUiThread(() ->
+                    if (context instanceof Activity) {
+                        ((Activity) context).runOnUiThread(() ->
                                 Toast.makeText(context, "Update check failed: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show()
                         );
                     }

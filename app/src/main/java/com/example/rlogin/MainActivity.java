@@ -18,10 +18,14 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class MainActivity extends AppCompatActivity {
-    Db db;
+    private Db db;
+    private String appliedTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeManager.applyNightMode(this);
+        ThemeManager.applyTheme(this);
+        appliedTheme = ThemeManager.getSelectedTheme(this);
         super.onCreate(savedInstanceState);
 
         boolean isDark = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
@@ -88,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_check_updates) {
-            GitHubUpdater.checkForUpdates(this, true);
+        if (item.getItemId() == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -98,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (appliedTheme != null && !appliedTheme.equals(ThemeManager.getSelectedTheme(this))) {
+            recreate();
+            return;
+        }
         updateStatus("WIFI", R.id.status_wifi);
         updateStatus("FEDENA", R.id.status_fedena);
         updateStatus("LMS", R.id.status_lms);
