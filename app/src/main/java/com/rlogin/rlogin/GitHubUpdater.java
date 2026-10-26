@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 public class GitHubUpdater {
     private static final String GITHUB_RELEASES_API = "https://api.github.com/repos/albinmmathew/R-Login/releases/latest";
 
-    private static AlertDialog createNeoDialog(Context context, View view) {
+    public static AlertDialog createNeoDialog(Context context, View view) {
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setView(view)
                 .create();
@@ -251,6 +251,9 @@ public class GitHubUpdater {
             ScrollView scroll = v.findViewById(R.id.scroll_changelog);
             TextView txtChangelog = v.findViewById(R.id.txt_changelog);
             txtChangelog.setText(formatMarkdown(changelog));
+            txtChangelog.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+            txtChangelog.setTextColor(ContextCompat.getColor(context, R.color.neo_ink));
+            txtChangelog.setLinkTextColor(ContextCompat.getColor(context, R.color.neo_brand));
             scroll.setVisibility(View.VISIBLE);
         }
 

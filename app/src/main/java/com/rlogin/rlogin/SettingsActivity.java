@@ -8,7 +8,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
@@ -183,52 +182,51 @@ public class SettingsActivity extends AppCompatActivity {
     private void showWhatsNewDialog() {
         Db db = new Db(this);
         String[] currentRelease = db.getReleaseCache("CURRENT");
-        String changelog = null;
-        String versionTitle = "v" + BuildConfig.VERSION_NAME;
+        String changelog = (currentRelease != null && currentRelease[1] != null && !currentRelease[1].trim().isEmpty()) ?
+                currentRelease[1] : null;
+        String versionTitle = (currentRelease != null && currentRelease[0] != null && !currentRelease[0].isEmpty()) ?
+                currentRelease[0] : "v" + BuildConfig.VERSION_NAME;
 
-        if (currentRelease != null && currentRelease[1] != null && !currentRelease[1].trim().isEmpty()) {
-            changelog = currentRelease[1];
-            if (currentRelease[0] != null && !currentRelease[0].isEmpty()) {
-                versionTitle = currentRelease[0];
-            }
-        }
-
-        CharSequence formattedMessage = (changelog != null && !changelog.trim().isEmpty()) ?
+        CharSequence formattedMessage = (changelog != null) ?
                 GitHubUpdater.formatMarkdown(changelog) :
                 getFallbackMessage();
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("What's New in " + versionTitle)
-                .setMessage(formattedMessage)
-                .setPositiveButton("Close", null)
-                .setNeutralButton("View on GitHub", (d, which) -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://github.com/albinmmathew/R-Login/releases/tag/v" + BuildConfig.VERSION_NAME));
-                    startActivity(browserIntent);
-                })
-                .show();
-
-        TextView messageView = dialog.findViewById(android.R.id.message);
-        if (messageView != null) {
-            messageView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
-        }
+        AppDialog.show(
+                this,
+                R.drawable.ic_new_releases,
+                "WHAT'S NEW",
+                versionTitle,
+                formattedMessage,
+                "VIEW ON GITHUB →",
+                () -> startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/albinmmathew/R-Login/releases/tag/v" + BuildConfig.VERSION_NAME)))
+        );
     }
 
     private void showAboutDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("About R-Login")
-                .setMessage(
-                        "R-Login v" + BuildConfig.VERSION_NAME + "\n\n" +
-                        "A lightweight, all-in-one campus portal utility built for Rajagiri College of Social Sciences.\n\n" +
-                        "Key Capabilities:\n" +
-                        "- Wi-Fi captive portal auto-login\n" +
-                        "- Fedena portal launcher and attendance percentage calculator\n" +
-                        "- Moodle LMS assignment tracker with due date management\n\n" +
-                        "Academic Disclaimer:\n" +
-                        "This application is an independent client and is not officially affiliated with or endorsed by Rajagiri College of Social Sciences.\n\n" +
-                        "Copyright (c) 2026 Albin M Mathew. All rights reserved."
-                )
-                .setPositiveButton("Dismiss", null)
-                .show();
+        CharSequence aboutContent = GitHubUpdater.formatMarkdown(
+                "### Academic Utility\n" +
+                "A lightweight, all-in-one campus portal utility built for Rajagiri College of Social Sciences.\n\n" +
+                "### Key Capabilities\n" +
+                "- Wi-Fi captive portal auto-login\n" +
+                "- Fedena portal launcher & attendance calculator\n" +
+                "- Moodle LMS assignment tracker & due dates\n\n" +
+                "### Contributors\n" +
+                "- Shyam James ([@shyamjames](https://github.com/shyamjames)) - Neo-Brutalist Theme & Visual Design\n" +
+                "- Albin M Mathew ([@albinmmathew](https://github.com/albinmmathew)) - Core Architecture & Security\n\n" +
+                "### Academic Disclaimer\n" +
+                "Independent student utility. Not officially affiliated with or endorsed by Rajagiri College of Social Sciences.\n\n" +
+                "Copyright (c) 2026 Albin M Mathew. All rights reserved."
+        );
+
+        AppDialog.show(
+                this,
+                R.drawable.ic_info,
+                "ABOUT R-LOGIN",
+                "v" + BuildConfig.VERSION_NAME,
+                aboutContent,
+                null,
+                null
+        );
     }
 }
