@@ -17,7 +17,13 @@ import java.util.concurrent.Executors;
 
 public class Net {
     public static void loginWifi(Context ctx, String user, String pass) {
-        Toast.makeText(ctx, "Connecting to M-WiFi...", Toast.LENGTH_SHORT).show();
+        loginWifi(ctx, user, pass, false);
+    }
+
+    public static void loginWifi(Context ctx, String user, String pass, boolean isAuto) {
+        if (!isAuto) {
+            Toast.makeText(ctx, "Connecting to M-WiFi...", Toast.LENGTH_SHORT).show();
+        }
         Executors.newSingleThreadExecutor().execute(() -> {
             String msg;
             HttpURLConnection conn = null;
@@ -30,7 +36,7 @@ public class Net {
                 boolean defaultIsCellular = defaultCaps != null && defaultCaps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR);
 
                 if (wifiNetwork == null && defaultIsCellular) {
-                    msg = "Wi-Fi is not connected. Please connect to M-WiFi first.";
+                    msg = isAuto ? null : "Wi-Fi is not connected. Please connect to M-WiFi first.";
                 } else {
                     long ts = System.currentTimeMillis();
                     String data = "mode=191&username=" + URLEncoder.encode(user, "UTF-8") +
@@ -62,25 +68,27 @@ public class Net {
                     }
 
                     if (res.contains("LIVE")) {
-                        msg = "M-WiFi Connected successfully!";
+                        msg = isAuto ? "M-WiFi: Auto-connected!" : "M-WiFi Connected successfully!";
                         if (cm != null) {
                             cm.reportNetworkConnectivity(wifiNetwork, true);
                         }
                     } else if (res.contains("LOGIN") || res.contains("REJECTED")) {
-                        msg = "Login failed: Invalid credentials or rejected";
+                        msg = isAuto ? "M-WiFi: Auto-login rejected (check credentials)" : "Login failed: Invalid credentials or rejected";
                     } else {
-                        msg = "Login failed: Unexpected response";
+                        msg = isAuto ? null : "Login failed: Unexpected response";
                     }
                 }
             } catch (Exception e) {
-                msg = "Connection error: " + e.getMessage();
+                msg = isAuto ? null : "Connection error: " + e.getMessage();
             } finally {
                 if (conn != null) {
                     conn.disconnect();
                 }
             }
-            String finalMsg = msg;
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(ctx, finalMsg, Toast.LENGTH_LONG).show());
+            if (msg != null) {
+                String finalMsg = msg;
+                new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(ctx, finalMsg, Toast.LENGTH_LONG).show());
+            }
         });
     }
 
