@@ -13,6 +13,9 @@ If you are a student looking to install and use the app on your Android device:
 3. Open the downloaded APK on your device to install.
    *(If prompted, enable "Install unknown apps" for your browser or file manager).*
 
+> **Google Play Protect Notice:**  
+> Because R-Login is distributed directly via GitHub releases rather than the Google Play Store, Play Protect may display an "Unrecognized app" or "Harmful app blocked" prompt upon installation. Tap **"More details"** -> **"Install anyway"**. The application is open-source, safe, and stores all student credentials encrypted 100% locally on your personal device.
+
 ---
 
 ## Features
