@@ -136,6 +136,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setupUpdateAndAboutRows() {
+        TextView txtWhatsNewTitle = findViewById(R.id.txt_whats_new_title);
+        if (txtWhatsNewTitle != null) {
+            txtWhatsNewTitle.setText("What's New in v" + BuildConfig.VERSION_NAME);
+        }
         TextView txtInstalledVersion = findViewById(R.id.txt_installed_version);
         if (txtInstalledVersion != null) {
             txtInstalledVersion.setText("Currently on v" + BuildConfig.VERSION_NAME);
@@ -177,6 +181,11 @@ public class SettingsActivity extends AppCompatActivity {
                         "- Moodle LMS Assignment Tracker with offline caching and 140-day retention"
                 )
                 .setPositiveButton("Close", null)
+                .setNeutralButton("View on GitHub", (dialog, which) -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://github.com/albinmmathew/R-Login/releases/tag/v" + BuildConfig.VERSION_NAME));
+                    startActivity(browserIntent);
+                })
                 .show();
     }
 

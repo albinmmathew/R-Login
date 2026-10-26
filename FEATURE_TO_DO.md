@@ -17,7 +17,16 @@ This document tracks upcoming plans, enhancements, and prioritized features for 
 
 ---
 
-### 2. Moodle LMS Assignments Tracker Polish & In-App Security
+### 2. In-App Release Notes Markdown Formatting & Rich Text Viewer
+- **Objective:** Render in-app update notes and changelogs with clean rich text formatting (bold titles, bullet points, headers) instead of displaying raw Markdown text with hashtag `#` and asterisk symbols.
+- **Planned Changes:**
+  - **Markdown to Spanned Parser:** Process raw GitHub Releases markdown in `GitHubUpdater.java` and `SettingsActivity.java` into Android `Spanned` rich text.
+  - **Heading & Bold Styling:** Automatically convert `#` and `##` lines into bold prominent section titles and strip raw Markdown markup.
+  - **Scrollable Rich Modal:** Provide a scrollable, styled view with proper typography so long release notes read naturally without raw syntax artifacts.
+
+---
+
+### 3. Moodle LMS Assignments Tracker Polish & In-App Security
 - **Objective:** Refine assignment list ordering and harden inter-activity credential passing.
 - **Planned Changes:**
   - **Descending Sort for Completed Tab:** In the Completed tab, sort items in descending order so the most recently completed or latest deadline items appear at the top instead of the bottom.
@@ -25,7 +34,7 @@ This document tracks upcoming plans, enhancements, and prioritized features for 
 
 ---
 
-### 3. Modernization & Architecture Upgrades
+### 4. Modernization & Architecture Upgrades
 - **Objective:** Clean up technical debt and migrate to modern Android Jetpack standards.
 - **Planned Changes:**
   - **SQLiteOpenHelper to Room:** Migrate `Db.java` to Android Room for compile-time verified database operations.

@@ -46,6 +46,13 @@ If you are a student looking to install and use the app on your Android device:
 
 ---
 
+## Release Notes & Updates
+
+- **In-App:** In the app, navigate to **Settings -> Updates & Releases -> What's New** to view release highlights and new features directly. Tap **"View on GitHub"** inside the dialog to open the full release notes and contributor credits online.
+- **Online:** All historical release notes, APK assets, and changelogs are published on the [GitHub Releases](https://github.com/albinmmathew/R-Login/releases) page.
+
+---
+
 ## Project Architecture
 
 ```text

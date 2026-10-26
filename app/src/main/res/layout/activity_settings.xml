@@ -322,7 +322,8 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="What's New in v2.1.0"
+                                android:id="@+id/txt_whats_new_title"
+                                android:text="What's New"
                                 android:textSize="15sp"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnSurface" />
