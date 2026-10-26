@@ -50,6 +50,10 @@ This document serves as the master backup plan and sequential execution tracker 
 
 ## Completed Features
 
+### Feature: Neo-Brutalist Theme & Dual-Layout Architecture
+- Implemented in: Version 3.0.0
+- Summary: Added complete Neo-Brutalist design system designed by Shyam James (@shyamjames) with bold typography, solid ink borders, hard drop shadows, and custom light and dark color palettes. Integrated dynamic layout switching across all core activities and added an inline password visibility toggle in the Credential Vault matching the Neo-Brutalist aesthetic.
+
 ### Feature: Application Identity Migration & Package Renaming
 - Implemented in: Version 3.0.0
 - Summary: Migrated Android application namespace and package ID from com.example.rlogin to production identifier com.rlogin.rlogin. Upgraded build configuration to versionCode 4 and versionName 3.0.0 for major milestone release.

@@ -2,8 +2,10 @@ package com.rlogin.rlogin;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,7 +45,23 @@ public class EditActivity extends AppCompatActivity {
 
         EditText uBox = findViewById(R.id.u_box);
         EditText pBox = findViewById(R.id.p_box);
+        ImageButton btnTogglePassword = findViewById(R.id.btn_toggle_password);
         Button sBtn = findViewById(R.id.s_btn);
+
+        if (btnTogglePassword != null) {
+            final boolean[] isPasswordVisible = {false};
+            btnTogglePassword.setOnClickListener(v -> {
+                isPasswordVisible[0] = !isPasswordVisible[0];
+                if (isPasswordVisible[0]) {
+                    pBox.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    btnTogglePassword.setImageResource(R.drawable.ic_visibility);
+                } else {
+                    pBox.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    btnTogglePassword.setImageResource(R.drawable.ic_visibility_off);
+                }
+                pBox.setSelection(pBox.getText().length());
+            });
+        }
 
         Db db = new Db(this);
         String[] saved = db.get(displayName);
