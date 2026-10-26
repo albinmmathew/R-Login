@@ -173,13 +173,18 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="36dp"
-                                    android:background="#0D47A1"
+                                    android:background="@color/neo_brand"
                                     android:gravity="center_vertical"
                                     android:paddingStart="8dp">
                                     <View
-                                        android:layout_width="20dp"
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:background="@color/neo_ink" />
+                                    <View
+                                        android:layout_width="28dp"
                                         android:layout_height="6dp"
-                                        android:background="#44FFFFFF" />
+                                        android:layout_marginStart="6dp"
+                                        android:background="#FFFFFFFF" />
                                 </LinearLayout>
 
                                 <!-- Visual Mockup Body -->
@@ -187,27 +192,28 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical"
+                                    android:background="@color/neo_bg"
                                     android:padding="8dp">
 
                                     <View
                                         android:layout_width="match_parent"
                                         android:layout_height="14dp"
-                                        android:background="#E3F2FD"
+                                        android:background="@color/neo_mint"
                                         android:layout_marginBottom="4dp" />
 
                                     <View
                                         android:layout_width="50dp"
                                         android:layout_height="10dp"
-                                        android:background="#1565C0"
+                                        android:background="@color/neo_yellow"
                                         android:layout_marginBottom="8dp" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Custom Theme"
+                                        android:text="Neo-Brutalist"
                                         android:textSize="13sp"
                                         android:textStyle="bold"
-                                        android:textColor="?attr/colorOnSurface" />
+                                        android:textColor="@color/neo_ink" />
 
                                     <TextView
                                         android:id="@+id/txt_status_custom"
