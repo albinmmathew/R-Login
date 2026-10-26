@@ -42,6 +42,12 @@ public class SettingsActivity extends AppCompatActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             toolbar.setNavigationOnClickListener(v -> finish());
+            if (ThemeManager.isBrutalist(this)) {
+                toolbar.setTitleTextColor(0xFF1A1616);
+                if (toolbar.getNavigationIcon() != null) {
+                    toolbar.getNavigationIcon().setTint(0xFF1A1616);
+                }
+            }
         }
 
         setupThemeCards();
@@ -55,26 +61,25 @@ public class SettingsActivity extends AppCompatActivity {
         txtStatusDefault = findViewById(R.id.txt_status_default);
         txtStatusCustom = findViewById(R.id.txt_status_custom);
 
-        String currentTheme = ThemeManager.getSelectedTheme(this);
-        updateCardStates(currentTheme);
+        updateCardStates(ThemeManager.getSelectedTheme(this));
 
         cardDefault.setOnClickListener(v -> {
-            if (!ThemeManager.THEME_DEFAULT.equals(ThemeManager.getSelectedTheme(this))) {
+            if (ThemeManager.isBrutalist(this)) {
                 ThemeManager.setSelectedTheme(this, ThemeManager.THEME_DEFAULT);
                 recreate();
             }
         });
 
         cardCustom.setOnClickListener(v -> {
-            if (!ThemeManager.THEME_CUSTOM.equals(ThemeManager.getSelectedTheme(this))) {
-                ThemeManager.setSelectedTheme(this, ThemeManager.THEME_CUSTOM);
+            if (!ThemeManager.isBrutalist(this)) {
+                ThemeManager.setSelectedTheme(this, ThemeManager.THEME_BRUTALIST);
                 recreate();
             }
         });
     }
 
     private void updateCardStates(String activeTheme) {
-        boolean isDefault = ThemeManager.THEME_DEFAULT.equals(activeTheme);
+        boolean isBrutalist = ThemeManager.isBrutalist(this);
 
         TypedValue typedValue = new TypedValue();
         getTheme().resolveAttribute(androidx.appcompat.R.attr.colorPrimary, typedValue, true);
@@ -83,7 +88,7 @@ public class SettingsActivity extends AppCompatActivity {
         int activeStrokeWidth = (int) (2 * getResources().getDisplayMetrics().density);
         int inactiveStrokeWidth = (int) (1 * getResources().getDisplayMetrics().density);
 
-        if (isDefault) {
+        if (!isBrutalist) {
             cardDefault.setStrokeColor(primaryColor);
             cardDefault.setStrokeWidth(activeStrokeWidth);
             txtStatusDefault.setText("Active (Default)");
@@ -97,7 +102,7 @@ public class SettingsActivity extends AppCompatActivity {
             cardCustom.setStrokeColor(primaryColor);
             cardCustom.setStrokeWidth(activeStrokeWidth);
             txtStatusCustom.setText("Active");
-            txtStatusCustom.setTextColor(0xFF4CAF50);
+            txtStatusCustom.setTextColor(0xFF11A677);
 
             cardDefault.setStrokeColor(defaultStrokeColor);
             cardDefault.setStrokeWidth(inactiveStrokeWidth);

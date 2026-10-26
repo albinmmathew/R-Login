@@ -33,21 +33,21 @@
             app:singleSelection="true"
             app:selectionRequired="true">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_filter_pending"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pending (0)" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_filter_overdue"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Overdue (0)" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_filter_completed"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"

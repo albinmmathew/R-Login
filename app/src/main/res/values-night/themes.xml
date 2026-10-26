@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme for Dark Mode. -->
+    <!-- Default Base application theme for Dark Mode. -->
     <style name="Base.Theme.Rlogin" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">#80A3D9</item>
         <item name="colorOnPrimary">#FFFFFF</item>
@@ -18,16 +18,26 @@
     <style name="Theme.Rlogin" parent="Base.Theme.Rlogin" />
     <style name="Theme.Rlogin.Default" parent="Base.Theme.Rlogin" />
 
-    <!-- Friend's Custom Theme (Dark Mode) -->
-    <style name="Theme.Rlogin.Custom" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#90CAF9</item>
-        <item name="colorOnPrimary">#0D47A1</item>
-        <item name="colorPrimaryContainer">#1565C0</item>
-        <item name="colorOnPrimaryContainer">#FFFFFF</item>
-        <item name="colorOnSurface">#FFFFFF</item>
-        <item name="colorOnSurfaceVariant">#B0BEC5</item>
+    <!-- Dark Mode Theme (Paros Inverted Brutalism). -->
+    <style name="Theme.Rlogin.Brutalist" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">#1A1616</item>
+        <item name="colorPrimary">@color/neo_brand</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">@color/neo_yellow</item>
+        <item name="colorOnPrimaryContainer">@color/neo_ink</item>
+
+        <item name="colorSurface">#231F1F</item>
+        <item name="colorOnSurface">#E8E5E3</item>
+        <item name="colorSurfaceVariant">#2E2929</item>
+        <item name="colorOnSurfaceVariant">#B0A8A4</item>
+        <item name="colorOutline">#E8E5E3</item>
+        <item name="colorOutlineVariant">#5A5555</item>
+
+        <!-- Status Bar Configuration -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">#0D47A1</item>
+        <item name="android:statusBarColor">#1A1616</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
+
+    <style name="Theme.Rlogin.Custom" parent="Theme.Rlogin.Brutalist" />
 </resources>

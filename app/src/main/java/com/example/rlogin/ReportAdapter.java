@@ -24,7 +24,9 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_subject, parent, false);
+        boolean isBrutalist = ThemeManager.isBrutalist(parent.getContext());
+        int layoutId = isBrutalist ? R.layout.item_subject_brutalist : R.layout.item_subject;
+        View v = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
         return new ViewHolder(v);
     }
 
@@ -34,14 +36,29 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         holder.txtName.setText(item.name);
         holder.txtCode.setText(item.code);
 
+        String pctVal;
         if (showDutyLeave) {
             holder.txtHeld.setText(item.dutyTotalHeld > 0 ? String.valueOf(item.dutyTotalHeld) : (item.totalHeld > 0 ? String.valueOf(item.totalHeld) : "-"));
             holder.txtAttended.setText(String.valueOf((int) item.dutyAttended));
-            holder.txtPct.setText(item.dutyPct.isEmpty() ? "-" : (item.dutyPct.contains("%") ? item.dutyPct : item.dutyPct + "%"));
+            pctVal = item.dutyPct.isEmpty() ? "-" : (item.dutyPct.contains("%") ? item.dutyPct : item.dutyPct + "%");
         } else {
             holder.txtHeld.setText(item.totalHeld > 0 ? String.valueOf(item.totalHeld) : "-");
             holder.txtAttended.setText(String.valueOf((int) item.attended));
-            holder.txtPct.setText(item.pct.isEmpty() ? "-" : (item.pct.contains("%") ? item.pct : item.pct + "%"));
+            pctVal = item.pct.isEmpty() ? "-" : (item.pct.contains("%") ? item.pct : item.pct + "%");
+        }
+        holder.txtPct.setText(pctVal);
+
+        boolean isBrutalist = ThemeManager.isBrutalist(holder.itemView.getContext());
+        String pctStr = pctVal.replace("%", "").trim();
+        try {
+            double p = Double.parseDouble(pctStr);
+            if (isBrutalist) {
+                holder.txtPct.setTextColor(p >= 75.0 ? 0xFF11A677 : 0xFFD52C36);
+            } else {
+                holder.txtPct.setTextColor(p >= 75.0 ? 0xFF4CAF50 : 0xFFF44336);
+            }
+        } catch (Exception e) {
+            holder.txtPct.setTextColor(isBrutalist ? 0xFFCD5535 : 0xFF002868);
         }
     }
 
