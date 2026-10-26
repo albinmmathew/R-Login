@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
@@ -43,9 +44,10 @@ public class SettingsActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             toolbar.setNavigationOnClickListener(v -> finish());
             if (ThemeManager.isBrutalist(this)) {
-                toolbar.setTitleTextColor(0xFF1A1616);
+                int inkColor = ContextCompat.getColor(this, R.color.neo_ink);
+                toolbar.setTitleTextColor(inkColor);
                 if (toolbar.getNavigationIcon() != null) {
-                    toolbar.getNavigationIcon().setTint(0xFF1A1616);
+                    toolbar.getNavigationIcon().setTint(inkColor);
                 }
             }
         }

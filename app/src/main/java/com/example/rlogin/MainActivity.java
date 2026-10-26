@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         if (ThemeManager.isBrutalist(this)) {
             MenuItem settingsItem = menu.findItem(R.id.action_settings);
             if (settingsItem != null && settingsItem.getIcon() != null) {
-                settingsItem.getIcon().setTint(0xFF1A1616);
+                settingsItem.getIcon().setTint(ContextCompat.getColor(this, R.color.neo_ink));
             }
         }
         return true;
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             statusTxt.setTextColor(isBrutalist ? 0xFF11A677 : 0xFF4CAF50);
         } else {
             statusTxt.setText(isBrutalist ? "NOT CONFIGURED" : "Not Configured");
-            statusTxt.setTextColor(isBrutalist ? 0xFF5A5555 : 0xFF9E9E9E);
+            statusTxt.setTextColor(isBrutalist ? ContextCompat.getColor(this, R.color.neo_muted) : 0xFF9E9E9E);
         }
     }
 
