@@ -14,5 +14,19 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
+    <!-- Default Classic Navy Theme -->
     <style name="Theme.Rlogin" parent="Base.Theme.Rlogin" />
+    <style name="Theme.Rlogin.Default" parent="Base.Theme.Rlogin" />
+
+    <!-- Friend's Custom Theme (XML-only customizable) -->
+    <style name="Theme.Rlogin.Custom" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#0D47A1</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#1565C0</item>
+        <item name="colorOnPrimaryContainer">#FFFFFF</item>
+        <item name="colorOnSurface">#0D47A1</item>
+        <item name="colorOnSurfaceVariant">#455A64</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 </resources>
