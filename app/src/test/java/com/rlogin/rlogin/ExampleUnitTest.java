@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 import org.junit.Test;
 

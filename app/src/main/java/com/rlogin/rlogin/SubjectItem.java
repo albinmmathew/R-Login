@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 public class SubjectItem {
     public String name;

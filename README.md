@@ -59,7 +59,7 @@ If you are a student looking to install and use the app on your Android device:
 ## Project Architecture
 
 ```text
-com.example.rlogin/
+com.rlogin.rlogin/
 ├── MainActivity.java        # Main Dashboard with Material 3 Service Cards & Status Badges
 ├── SettingsActivity.java    # Settings Hub: Theme selection, Dark Mode toggle, Updates, About
 ├── ThemeManager.java        # Centralized theme and night mode manager

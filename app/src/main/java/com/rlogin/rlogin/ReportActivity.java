@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 import android.content.ContentValues;
 import android.content.Context;

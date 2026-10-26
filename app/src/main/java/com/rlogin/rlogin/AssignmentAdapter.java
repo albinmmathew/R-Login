@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
