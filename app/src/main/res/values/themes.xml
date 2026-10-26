@@ -10,6 +10,8 @@
         <item name="colorOnSurface">#002868</item>
         <item name="colorSurfaceVariant">#F0F4F8</item>
         <item name="colorOnSurfaceVariant">#555555</item>
+        <item name="colorOutline">#2B002868</item>
+        <item name="colorOutlineVariant">#18002868</item>
 
         <!-- Status Bar Configuration -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
