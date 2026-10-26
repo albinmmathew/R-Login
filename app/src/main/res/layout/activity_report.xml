@@ -33,7 +33,7 @@
             app:selectionRequired="true"
             app:checkedButton="@id/btn_with_od">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_with_od"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:text="With Duty Leave (OD)" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_without_od"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"

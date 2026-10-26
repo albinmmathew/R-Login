@@ -48,7 +48,7 @@ public class ReportActivity extends AppCompatActivity {
             controller.setAppearanceLightStatusBars(!isDark);
         }
 
-        setContentView(R.layout.activity_report);
+        setContentView(ThemeManager.isBrutalist(this) ? R.layout.activity_report_brutalist : R.layout.activity_report);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

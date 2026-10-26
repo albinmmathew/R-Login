@@ -23,7 +23,7 @@ public class EditActivity extends AppCompatActivity {
             controller.setAppearanceLightStatusBars(!isDark);
         }
 
-        setContentView(R.layout.activity_edit);
+        setContentView(ThemeManager.isBrutalist(this) ? R.layout.activity_edit_brutalist : R.layout.activity_edit);
 
         String site = getIntent().getStringExtra("site");
         String displayName = site != null ? site : "Service";

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
@@ -25,8 +26,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         ThemeManager.applyNightMode(this);
         ThemeManager.applyTheme(this);
-        appliedTheme = ThemeManager.getSelectedTheme(this);
+        String activeTheme = ThemeManager.getSelectedTheme(this);
+        String savedTheme = savedInstanceState != null ? savedInstanceState.getString("theme_applied") : null;
+        if (savedTheme != null && !savedTheme.equals(activeTheme)) {
+            savedInstanceState = null;
+        }
         super.onCreate(savedInstanceState);
+        appliedTheme = activeTheme;
 
         boolean isDark = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
@@ -34,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             controller.setAppearanceLightStatusBars(!isDark);
         }
 
-        setContentView(R.layout.activity_main);
+        setContentView(ThemeManager.isBrutalist(this) ? R.layout.activity_main_brutalist : R.layout.activity_main);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -86,8 +92,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("theme_applied", appliedTheme);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (ThemeManager.isBrutalist(this)) {
+            MenuItem settingsItem = menu.findItem(R.id.action_settings);
+            if (settingsItem != null && settingsItem.getIcon() != null) {
+                settingsItem.getIcon().setTint(ContextCompat.getColor(this, R.color.neo_ink));
+            }
+        }
         return true;
     }
 
@@ -116,12 +134,13 @@ public class MainActivity extends AppCompatActivity {
         TextView statusTxt = findViewById(statusId);
         if (statusTxt == null) return;
         String[] saved = db.get(site);
+        boolean isBrutalist = ThemeManager.isBrutalist(this);
         if (saved != null && !saved[0].isEmpty() && !saved[1].isEmpty()) {
-            statusTxt.setText("Configured (" + saved[0] + ")");
-            statusTxt.setTextColor(0xFF4CAF50);
+            statusTxt.setText(isBrutalist ? "CONFIGURED (" + saved[0] + ")" : "Configured (" + saved[0] + ")");
+            statusTxt.setTextColor(isBrutalist ? 0xFF11A677 : 0xFF4CAF50);
         } else {
-            statusTxt.setText("Not Configured");
-            statusTxt.setTextColor(0xFF9E9E9E);
+            statusTxt.setText(isBrutalist ? "NOT CONFIGURED" : "Not Configured");
+            statusTxt.setTextColor(isBrutalist ? ContextCompat.getColor(this, R.color.neo_muted) : 0xFF9E9E9E);
         }
     }
 

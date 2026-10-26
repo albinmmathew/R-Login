@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default Classic Navy Palette (Dark Mode) -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="navy_primary">#80A3D9</color>
+    <color name="navy_on_primary">#FFFFFF</color>
+    <color name="navy_primary_container">#002868</color>
+    <color name="navy_on_primary_container">#FFFFFF</color>
+
+    <!-- Paros Neo-Brutalist Palette (Dark Mode / Inverted Brutalism) -->
+    <color name="neo_bg">#141212</color>
+    <color name="neo_surface">#221E1E</color>
+    <color name="neo_surface_variant">#2E2929</color>
+    <color name="neo_ink">#F5F2F0</color>
+    <color name="neo_shadow">#000000</color>
+    <color name="neo_brand">#E66746</color>
+    <color name="neo_yellow">#E0B644</color>
+    <color name="neo_mint">#2C5846</color>
+    <color name="neo_peach">#52362A</color>
+    <color name="neo_green">#14B884</color>
+    <color name="neo_danger">#E84852</color>
+    <color name="neo_danger_bg">#441C1E</color>
+    <color name="neo_muted">#B0A8A4</color>
+    <color name="neo_section_mint">#1A2F25</color>
+    <color name="neo_section_cream">#2F2818</color>
+</resources>

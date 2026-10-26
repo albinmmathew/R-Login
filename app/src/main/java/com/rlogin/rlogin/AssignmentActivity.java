@@ -90,7 +90,7 @@ public class AssignmentActivity extends AppCompatActivity implements AssignmentA
             controller.setAppearanceLightStatusBars(!isDark);
         }
 
-        setContentView(R.layout.activity_assignment);
+        setContentView(ThemeManager.isBrutalist(this) ? R.layout.activity_assignment_brutalist : R.layout.activity_assignment);
 
         db = new Db(this);
         db.cleanupOldCompletedAssignments();

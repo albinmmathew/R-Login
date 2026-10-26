@@ -41,7 +41,9 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_assignment, parent, false);
+        boolean isBrutalist = ThemeManager.isBrutalist(parent.getContext());
+        int layoutId = isBrutalist ? R.layout.item_assignment_brutalist : R.layout.item_assignment;
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
         return new ViewHolder(view);
     }
 
@@ -90,40 +92,75 @@ public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentAdapter.Vi
 
             badgeUrgency.setText(item.getCountdownText());
 
+            boolean isBrutalist = ThemeManager.isBrutalist(itemView.getContext());
             int state = item.getState();
             int badgeColor;
-            switch (state) {
-                case AssignmentItem.STATE_OVERDUE:
-                    badgeColor = 0xFFD32F2F; // Red
-                    break;
-                case AssignmentItem.STATE_URGENT:
-                    badgeColor = 0xFFE64A19; // Deep Orange / Red-Orange
-                    break;
-                case AssignmentItem.STATE_DUE_SOON:
-                    badgeColor = 0xFFF57C00; // Orange / Amber
-                    break;
-                case AssignmentItem.STATE_COMPLETED:
-                    badgeColor = 0xFF546E7A; // Slate Grey
-                    break;
-                case AssignmentItem.STATE_NO_DEADLINE:
-                    badgeColor = 0xFF0277BD; // Ocean Blue (Undated)
-                    break;
-                case AssignmentItem.STATE_UPCOMING:
-                default:
-                    badgeColor = 0xFF2E7D32; // Green
-                    break;
+            if (isBrutalist) {
+                switch (state) {
+                    case AssignmentItem.STATE_OVERDUE:
+                        badgeColor = 0xFFD52C36; // Paros neo_danger
+                        break;
+                    case AssignmentItem.STATE_URGENT:
+                        badgeColor = 0xFFCD5535; // Paros neo_brand
+                        break;
+                    case AssignmentItem.STATE_DUE_SOON:
+                        badgeColor = 0xFFE9A86C; // Paros neo_peach
+                        break;
+                    case AssignmentItem.STATE_COMPLETED:
+                        badgeColor = 0xFF5A5555; // Paros neo_muted
+                        break;
+                    case AssignmentItem.STATE_NO_DEADLINE:
+                        badgeColor = 0xFFEAD97F; // Paros neo_yellow
+                        break;
+                    case AssignmentItem.STATE_UPCOMING:
+                    default:
+                        badgeColor = 0xFF11A677; // Paros neo_green
+                        break;
+                }
+            } else {
+                switch (state) {
+                    case AssignmentItem.STATE_OVERDUE:
+                        badgeColor = 0xFFD32F2F; // Red
+                        break;
+                    case AssignmentItem.STATE_URGENT:
+                        badgeColor = 0xFFE64A19; // Deep Orange / Red-Orange
+                        break;
+                    case AssignmentItem.STATE_DUE_SOON:
+                        badgeColor = 0xFFF57C00; // Orange / Amber
+                        break;
+                    case AssignmentItem.STATE_COMPLETED:
+                        badgeColor = 0xFF546E7A; // Slate Grey
+                        break;
+                    case AssignmentItem.STATE_NO_DEADLINE:
+                        badgeColor = 0xFF0277BD; // Ocean Blue (Undated)
+                        break;
+                    case AssignmentItem.STATE_UPCOMING:
+                    default:
+                        badgeColor = 0xFF2E7D32; // Green
+                        break;
+                }
             }
 
             GradientDrawable shape = new GradientDrawable();
             shape.setShape(GradientDrawable.RECTANGLE);
-            shape.setCornerRadius(16f);
+            if (isBrutalist) {
+                shape.setCornerRadius(999f);
+                shape.setStroke(3, 0xFF1A1616);
+            } else {
+                shape.setCornerRadius(16f);
+            }
             shape.setColor(badgeColor);
             badgeUrgency.setBackground(shape);
+            if (isBrutalist && badgeColor == 0xFFEAD97F) {
+                badgeUrgency.setTextColor(0xFF1A1616);
+            } else {
+                badgeUrgency.setTextColor(0xFFFFFFFF);
+            }
 
             if (item.isClosed()) {
-                btnToggleDone.setText("Restore ↩");
+                btnToggleDone.setText(isBrutalist ? "RESTORE ↩" : "Restore ↩");
             } else {
-                btnToggleDone.setText("Mark Done ✓");
+                btnToggleDone.setText(isBrutalist ? "MARK DONE ✓" : "Mark Done ✓");
             }
 
             btnOpen.setOnClickListener(v -> {

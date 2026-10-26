@@ -1,12 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme for Dark Mode. -->
+    <!-- Default Base application theme for Dark Mode. -->
     <style name="Base.Theme.Rlogin" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">#80A3D9</item>
         <item name="colorOnPrimary">#FFFFFF</item>
         <item name="colorPrimaryContainer">@color/navy_primary</item>
         <item name="colorOnPrimaryContainer">#FFFFFF</item>
 
+        <item name="colorSurface">#121824</item>
         <item name="colorOnSurface">#FFFFFF</item>
+        <item name="colorSurfaceVariant">#1C2638</item>
         <item name="colorOnSurfaceVariant">#CCCCCC</item>
 
         <!-- Dark Mode Status Bar Configuration -->
@@ -18,16 +20,32 @@
     <style name="Theme.Rlogin" parent="Base.Theme.Rlogin" />
     <style name="Theme.Rlogin.Default" parent="Base.Theme.Rlogin" />
 
-    <!-- Friend's Custom Theme (Dark Mode) -->
-    <style name="Theme.Rlogin.Custom" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#90CAF9</item>
-        <item name="colorOnPrimary">#0D47A1</item>
-        <item name="colorPrimaryContainer">#1565C0</item>
-        <item name="colorOnPrimaryContainer">#FFFFFF</item>
-        <item name="colorOnSurface">#FFFFFF</item>
-        <item name="colorOnSurfaceVariant">#B0BEC5</item>
+    <!-- Dark Mode Theme (Paros Inverted Brutalism). -->
+    <style name="Theme.Rlogin.Brutalist" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/neo_bg</item>
+        <item name="colorPrimary">@color/neo_brand</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">@color/neo_yellow</item>
+        <item name="colorOnPrimaryContainer">@color/neo_ink</item>
+
+        <item name="colorSurface">@color/neo_bg</item>
+        <item name="colorOnSurface">@color/neo_ink</item>
+        <item name="colorSurfaceVariant">@color/neo_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/neo_muted</item>
+        <item name="colorOutline">@color/neo_ink</item>
+        <item name="colorOutlineVariant">@color/neo_muted</item>
+
+        <!-- Status Bar Configuration -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">#0D47A1</item>
+        <item name="android:statusBarColor">@color/neo_bg</item>
         <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Overflow Button & Popup Menu Styling -->
+        <item name="actionOverflowButtonStyle">@style/Widget.Neo.OverflowButton</item>
+        <item name="android:actionOverflowButtonStyle">@style/Widget.Neo.OverflowButton</item>
+        <item name="popupMenuStyle">@style/Widget.Neo.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.Neo.PopupMenu</item>
     </style>
+
+    <style name="Theme.Rlogin.Custom" parent="Theme.Rlogin.Brutalist" />
 </resources>
