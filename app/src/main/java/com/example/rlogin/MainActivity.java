@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         db = new Db(this);
+        db.syncInstalledRelease(BuildConfig.VERSION_NAME, null);
 
         setup("WIFI", R.id.status_wifi, R.id.btn_edit_wifi, R.id.c_wifi, null);
         setup("FEDENA", R.id.status_fedena, R.id.btn_edit_fedena, R.id.c_fedena, "https://fedena.rajagiri.edu/");

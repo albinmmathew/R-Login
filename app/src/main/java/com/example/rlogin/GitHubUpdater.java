@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
+import android.text.Html;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -52,7 +53,7 @@ public class GitHubUpdater {
                     StringBuilder builder = new StringBuilder();
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        builder.append(line);
+                        builder.append(line).append("\n");
                     }
                     reader.close();
 
@@ -76,12 +77,17 @@ public class GitHubUpdater {
                     final String finalApkUrl = apkDownloadUrl;
                     String latestVersion = tagName.replaceAll("[^0-9.]", "");
 
+                    Db db = new Db(context);
                     if (isNewerVersion(latestVersion, currentVersion) && finalApkUrl != null) {
+                        db.saveReleaseCache("PENDING", tagName, body, finalApkUrl);
                         if (context instanceof Activity) {
                             ((Activity) context).runOnUiThread(() -> showUpdateDialog(context, tagName, body, finalApkUrl));
                         }
-                    } else if (showToastIfLatest) {
-                        if (context instanceof Activity) {
+                    } else {
+                        // User is on the latest version or beyond!
+                        db.saveReleaseCache("CURRENT", tagName, body, finalApkUrl);
+                        db.clearPendingRelease();
+                        if (showToastIfLatest && context instanceof Activity) {
                             ((Activity) context).runOnUiThread(() ->
                                     Toast.makeText(context, "You are on the latest version (" + currentVersion + ")", Toast.LENGTH_SHORT).show()
                             );
@@ -128,12 +134,46 @@ public class GitHubUpdater {
     }
 
     private static void showUpdateDialog(Context context, String tagName, String changelog, String apkUrl) {
+        CharSequence formattedNotes = formatMarkdown(changelog.isEmpty() ?
+                "A new release (" + tagName + ") is available for R-Login. Would you like to download and install it?" : changelog);
+
         new AlertDialog.Builder(context)
                 .setTitle("New Update Available (" + tagName + ")")
-                .setMessage(changelog.isEmpty() ? "A new release is available for R-Login. Would you like to download and install it?" : changelog)
+                .setMessage(formattedNotes)
                 .setPositiveButton("Download & Install", (dialog, which) -> startApkDownload(context, apkUrl))
                 .setNegativeButton("Later", null)
                 .show();
+    }
+
+    public static CharSequence formatMarkdown(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return "";
+        }
+        String[] lines = text.split("\n");
+        StringBuilder html = new StringBuilder();
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.startsWith("### ")) {
+                html.append("<br><b><font color='#002868'>").append(trimmed.substring(4)).append("</font></b><br>");
+            } else if (trimmed.startsWith("## ")) {
+                html.append("<br><b><big>").append(trimmed.substring(3)).append("</big></b><br>");
+            } else if (trimmed.startsWith("# ")) {
+                html.append("<b><big>").append(trimmed.substring(2)).append("</big></b><br>");
+            } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
+                html.append("&nbsp;&nbsp;•&nbsp;").append(trimmed.substring(2)).append("<br>");
+            } else if (!trimmed.isEmpty()) {
+                html.append(trimmed).append("<br>");
+            }
+        }
+        String processed = html.toString()
+                .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
+                .replaceAll("\\*(.*?)\\*", "<i>$1</i>");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(processed, Html.FROM_HTML_MODE_COMPACT);
+        } else {
+            return Html.fromHtml(processed);
+        }
     }
 
     public static void startApkDownload(Context context, String apkUrl) {

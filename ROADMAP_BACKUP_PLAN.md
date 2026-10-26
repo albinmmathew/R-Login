@@ -26,19 +26,8 @@ This document serves as the master backup plan and sequential execution tracker 
 
 ---
 
-### Item 2: In-App Release Notes Markdown Formatting & Rich Text Viewer
+### Item 2: LMS Assignments Tracker Polish & In-App Security
 - Status: Queued (Blocked on Item 1)
-- Target Scope:
-  - Process raw GitHub Releases markdown into Android Spanned rich text formatting.
-  - Strip literal hashtag (#) and asterisk characters and style section titles with bold typography.
-  - Provide a scrollable, styled modal view for update notes and What's New dialog.
-- Verification Gate:
-  - Verify release notes modal renders headers in bold, bullet lists cleanly, and contains zero raw markdown syntax characters.
-
----
-
-### Item 3: LMS Assignments Tracker Polish & In-App Security
-- Status: Queued (Blocked on Item 2)
 - Target Scope:
   - Descending sort on Completed tab (latest deadline/completion at top).
   - Hardened IPC: Activities receive only site key ("LMS" / "FEDENA") and decrypt locally inside private memory.
@@ -48,7 +37,7 @@ This document serves as the master backup plan and sequential execution tracker 
 
 ---
 
-### Item 4: Modernization Overhaul
+### Item 3: Modernization Overhaul
 - Status: Long-term Architecture
 - Target Scope:
   - Migrate Db.java from raw SQLiteOpenHelper to Android Room.
@@ -60,6 +49,10 @@ This document serves as the master backup plan and sequential execution tracker 
 ---
 
 ## Completed Features
+
+### Feature: 2-Slot Release Notes Caching & Markdown Rich-Text Formatter
+- Implemented in: Version 2.1.1 (Target Release)
+- Summary: Built a 2-slot self-pruning SQLite table (release_cache) that caches CURRENT and PENDING releases with an automatic promotion-on-launch lifecycle. Created GitHubUpdater.formatMarkdown to convert raw GitHub markdown into styled rich text with bold section titles, bullet points, and zero raw hashtag symbols in update and What's New dialogs.
 
 ### Feature: Settings Hub, Theming Engine & Updates Center
 - Implemented in: Version 2.1.0

@@ -8,13 +8,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class Db extends SQLiteOpenHelper {
     public Db(Context context) {
-        super(context, "app.db", null, 3);
+        super(context, "app.db", null, 4);
     }
     
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE acc (site TEXT PRIMARY KEY, user TEXT, pass TEXT)");
         createAssignmentTables(db);
+        createReleaseCacheTable(db);
     }
     
     @Override
@@ -26,6 +27,9 @@ public class Db extends SQLiteOpenHelper {
             try {
                 db.execSQL("ALTER TABLE assignment_status ADD COLUMN due_timestamp INTEGER DEFAULT 0");
             } catch (Exception ignored) {}
+        }
+        if (oldV < 4) {
+            createReleaseCacheTable(db);
         }
     }
 
@@ -41,6 +45,15 @@ public class Db extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY CHECK (id = 1), " +
                 "json_data TEXT, " +
                 "last_synced INTEGER)");
+    }
+
+    private void createReleaseCacheTable(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS release_cache (" +
+                "slot TEXT PRIMARY KEY, " +
+                "version_tag TEXT NOT NULL, " +
+                "changelog TEXT, " +
+                "apk_url TEXT, " +
+                "fetched_at INTEGER)");
     }
     
     public void save(String site, String user, String pass) {
@@ -146,5 +159,76 @@ public class Db extends SQLiteOpenHelper {
             c.close();
         }
         return null;
+    }
+
+    public void saveReleaseCache(String slot, String versionTag, String changelog, String apkUrl) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("slot", slot);
+        cv.put("version_tag", versionTag);
+        cv.put("changelog", changelog);
+        cv.put("apk_url", apkUrl);
+        cv.put("fetched_at", System.currentTimeMillis());
+        db.replace("release_cache", null, cv);
+    }
+
+    public String[] getReleaseCache(String slot) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT version_tag, changelog, apk_url FROM release_cache WHERE slot = ?", new String[]{slot});
+        if (c != null) {
+            if (c.moveToFirst()) {
+                String[] res = new String[]{c.getString(0), c.getString(1), c.getString(2)};
+                c.close();
+                return res;
+            }
+            c.close();
+        }
+        return null;
+    }
+
+    public void clearPendingRelease() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("release_cache", "slot = 'PENDING'", null);
+    }
+
+    public void syncInstalledRelease(String installedVersionName, String defaultChangelog) {
+        SQLiteDatabase db = getWritableDatabase();
+        String normalizedVersion = installedVersionName.startsWith("v") ? installedVersionName : "v" + installedVersionName;
+
+        // Check if a PENDING release matches what was just installed
+        Cursor cPending = db.rawQuery("SELECT version_tag, changelog, apk_url FROM release_cache WHERE slot = 'PENDING'", null);
+        if (cPending != null) {
+            if (cPending.moveToFirst()) {
+                String pendingTag = cPending.getString(0);
+                String pendingChangelog = cPending.getString(1);
+                String pendingApkUrl = cPending.getString(2);
+                if (pendingTag != null && (pendingTag.equalsIgnoreCase(normalizedVersion) || pendingTag.replace("v", "").equalsIgnoreCase(installedVersionName))) {
+                    // User installed the pending update! Promote to CURRENT and clear PENDING
+                    saveReleaseCache("CURRENT", pendingTag, pendingChangelog, pendingApkUrl);
+                    clearPendingRelease();
+                    cPending.close();
+                    return;
+                }
+            }
+            cPending.close();
+        }
+
+        // If CURRENT is missing or reflects an older version, update CURRENT
+        Cursor cCurrent = db.rawQuery("SELECT version_tag FROM release_cache WHERE slot = 'CURRENT'", null);
+        boolean currentMatches = false;
+        if (cCurrent != null) {
+            if (cCurrent.moveToFirst()) {
+                String currentTag = cCurrent.getString(0);
+                if (currentTag != null && (currentTag.equalsIgnoreCase(normalizedVersion) || currentTag.replace("v", "").equalsIgnoreCase(installedVersionName))) {
+                    currentMatches = true;
+                }
+            }
+            cCurrent.close();
+        }
+
+        if (!currentMatches) {
+            saveReleaseCache("CURRENT", normalizedVersion, defaultChangelog, null);
+            clearPendingRelease();
+        }
     }
 }

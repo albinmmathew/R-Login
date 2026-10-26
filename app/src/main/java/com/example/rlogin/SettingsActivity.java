@@ -169,17 +169,30 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    public static String getFallbackMessage() {
+        return "Release notes are not available offline.\n\nConnect to the internet and tap 'Check for Updates' to view the latest changelog.";
+    }
+
     private void showWhatsNewDialog() {
+        Db db = new Db(this);
+        String[] currentRelease = db.getReleaseCache("CURRENT");
+        String changelog = null;
+        String versionTitle = "v" + BuildConfig.VERSION_NAME;
+
+        if (currentRelease != null && currentRelease[1] != null && !currentRelease[1].trim().isEmpty()) {
+            changelog = currentRelease[1];
+            if (currentRelease[0] != null && !currentRelease[0].isEmpty()) {
+                versionTitle = currentRelease[0];
+            }
+        }
+
+        CharSequence formattedMessage = (changelog != null && !changelog.trim().isEmpty()) ?
+                GitHubUpdater.formatMarkdown(changelog) :
+                getFallbackMessage();
+
         new AlertDialog.Builder(this)
-                .setTitle("What's New in v" + BuildConfig.VERSION_NAME)
-                .setMessage(
-                        "- Dedicated Settings Hub accessible directly from the top bar\n" +
-                        "- Dynamic Theme Engine supporting Classic Navy and Custom Theme\n" +
-                        "- Appearance mode switcher: System Default, Light, and Dark\n" +
-                        "- In-app GitHub update checker and What's New release details\n" +
-                        "- Fixed light mode icon contrast and system status bar insets\n" +
-                        "- Moodle LMS Assignment Tracker with offline caching and 140-day retention"
-                )
+                .setTitle("What's New in " + versionTitle)
+                .setMessage(formattedMessage)
                 .setPositiveButton("Close", null)
                 .setNeutralButton("View on GitHub", (dialog, which) -> {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW,
