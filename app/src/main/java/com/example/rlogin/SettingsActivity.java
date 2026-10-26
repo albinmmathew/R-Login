@@ -190,16 +190,21 @@ public class SettingsActivity extends AppCompatActivity {
                 GitHubUpdater.formatMarkdown(changelog) :
                 getFallbackMessage();
 
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("What's New in " + versionTitle)
                 .setMessage(formattedMessage)
                 .setPositiveButton("Close", null)
-                .setNeutralButton("View on GitHub", (dialog, which) -> {
+                .setNeutralButton("View on GitHub", (d, which) -> {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                             Uri.parse("https://github.com/albinmmathew/R-Login/releases/tag/v" + BuildConfig.VERSION_NAME));
                     startActivity(browserIntent);
                 })
                 .show();
+
+        TextView messageView = dialog.findViewById(android.R.id.message);
+        if (messageView != null) {
+            messageView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+        }
     }
 
     private void showAboutDialog() {

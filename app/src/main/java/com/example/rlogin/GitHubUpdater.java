@@ -137,12 +137,17 @@ public class GitHubUpdater {
         CharSequence formattedNotes = formatMarkdown(changelog.isEmpty() ?
                 "A new release (" + tagName + ") is available for R-Login. Would you like to download and install it?" : changelog);
 
-        new AlertDialog.Builder(context)
+        AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle("New Update Available (" + tagName + ")")
                 .setMessage(formattedNotes)
-                .setPositiveButton("Download & Install", (dialog, which) -> startApkDownload(context, apkUrl))
+                .setPositiveButton("Download & Install", (d, which) -> startApkDownload(context, apkUrl))
                 .setNegativeButton("Later", null)
                 .show();
+
+        android.widget.TextView messageView = dialog.findViewById(android.R.id.message);
+        if (messageView != null) {
+            messageView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+        }
     }
 
     public static CharSequence formatMarkdown(String text) {
@@ -166,6 +171,7 @@ public class GitHubUpdater {
             }
         }
         String processed = html.toString()
+                .replaceAll("\\[([^\\]]+)\\]\\((https?://[^\\)]+)\\)", "<a href=\"$2\">$1</a>")
                 .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
                 .replaceAll("\\*(.*?)\\*", "<i>$1</i>");
 
