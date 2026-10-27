@@ -5,14 +5,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.widget.Toast;
 
 public class QuickLoginTileService extends TileService {
 
     @Override
     public void onStartListening() {
         super.onStartListening();
-        updateTileState(false, null);
+        updateTileState();
     }
 
     @Override
@@ -21,9 +20,9 @@ public class QuickLoginTileService extends TileService {
         Tile tile = getQsTile();
         if (tile == null) return;
 
-        // Check if device is connected to Wi-Fi
+        // Step 1: Check if device is connected to Wi-Fi
         if (!Net.isWifiConnected(this)) {
-            Toast.makeText(this, "Wi-Fi is not connected. Connect to M-WiFi first.", Toast.LENGTH_SHORT).show();
+            StatusNotifier.notifyError(this, "Wi-Fi is not connected. Please connect to campus Wi-Fi first.");
             tile.setState(Tile.STATE_UNAVAILABLE);
             tile.setLabel("M-WiFi");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -33,11 +32,11 @@ public class QuickLoginTileService extends TileService {
             return;
         }
 
-        // Check credentials
+        // Step 2: Check credentials
         Db db = new Db(this);
         String[] saved = db.get("WIFI");
         if (saved == null || saved[0] == null || saved[0].trim().isEmpty() || saved[1] == null || saved[1].trim().isEmpty()) {
-            Toast.makeText(this, "No credentials saved. Save Wi-Fi login in R-Login first.", Toast.LENGTH_LONG).show();
+            StatusNotifier.notifyError(this, "No credentials saved");
             tile.setState(Tile.STATE_INACTIVE);
             tile.setLabel("M-WiFi");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -47,9 +46,9 @@ public class QuickLoginTileService extends TileService {
             return;
         }
 
-        // Set visual state to "Connecting..."
+        // Step 3: Set visual state to "Connecting..."
         tile.setState(Tile.STATE_ACTIVE);
-        tile.setLabel("M-WiFi");
+        tile.setLabel("Connecting...");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             tile.setSubtitle("Connecting...");
         }
@@ -58,42 +57,51 @@ public class QuickLoginTileService extends TileService {
         String user = saved[0];
         String pass = Crypt.dec(saved[1]);
 
+        // Step 4: Login
         Net.loginWifi(this, user, pass, false, (success, message) -> {
             Tile currentTile = getQsTile();
-            if (currentTile == null) return;
 
             if (success) {
-                currentTile.setState(Tile.STATE_ACTIVE);
-                currentTile.setLabel("M-WiFi");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    currentTile.setSubtitle("Connected");
-                }
-                currentTile.updateTile();
+                StatusNotifier.clearNotification(this);
+                StatusNotifier.vibrate(this, true); // 1 crisp tick
 
-                // Revert to Inactive ("Tap to connect") after 6 seconds so user can click it again if disconnected later
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    Tile t = getQsTile();
-                    if (t != null) {
-                        t.setState(Tile.STATE_INACTIVE);
-                        t.setLabel("M-WiFi");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            t.setSubtitle("Tap to connect");
-                        }
-                        t.updateTile();
+                if (currentTile != null) {
+                    currentTile.setState(Tile.STATE_ACTIVE);
+                    currentTile.setLabel("M-WiFi");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        currentTile.setSubtitle("Connected");
                     }
-                }, 6000);
-            } else {
-                currentTile.setState(Tile.STATE_INACTIVE);
-                currentTile.setLabel("M-WiFi");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    currentTile.setSubtitle("Failed");
+                    currentTile.updateTile();
+
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        Tile t = getQsTile();
+                        if (t != null) {
+                            t.setState(Tile.STATE_INACTIVE);
+                            t.setLabel("M-WiFi");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                t.setSubtitle("Tap to connect");
+                            }
+                            t.updateTile();
+                        }
+                    }, 6000);
                 }
-                currentTile.updateTile();
+            } else {
+                String errorMsg = (message != null && !message.isEmpty()) ? message : "Could not reach gateway 172.16.0.20";
+                StatusNotifier.notifyError(this, errorMsg);
+
+                if (currentTile != null) {
+                    currentTile.setState(Tile.STATE_INACTIVE);
+                    currentTile.setLabel("M-WiFi");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        currentTile.setSubtitle("Failed");
+                    }
+                    currentTile.updateTile();
+                }
             }
         });
     }
 
-    private void updateTileState(boolean connecting, String customSubtitle) {
+    private void updateTileState() {
         Tile tile = getQsTile();
         if (tile == null) return;
 
@@ -104,15 +112,10 @@ public class QuickLoginTileService extends TileService {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 tile.setSubtitle("Wi-Fi Off");
             }
-        } else if (connecting) {
-            tile.setState(Tile.STATE_ACTIVE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.setSubtitle(customSubtitle != null ? customSubtitle : "Connecting...");
-            }
         } else {
             tile.setState(Tile.STATE_INACTIVE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.setSubtitle(customSubtitle != null ? customSubtitle : "Tap to connect");
+                tile.setSubtitle("Tap to connect");
             }
         }
 

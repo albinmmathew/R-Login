@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 public class QuickLoginWidgetProvider extends AppWidgetProvider {
 
@@ -33,32 +32,40 @@ public class QuickLoginWidgetProvider extends AppWidgetProvider {
     }
 
     private void handleWidgetClick(Context context) {
+        // Step 1: Check Wi-Fi
         if (!Net.isWifiConnected(context)) {
-            Toast.makeText(context, "Wi-Fi is not connected. Connect to M-WiFi first.", Toast.LENGTH_SHORT).show();
+            StatusNotifier.notifyError(context, "Wi-Fi is not connected. Please connect to campus Wi-Fi first.");
             updateAllWidgets(context, "Wi-Fi Off", 0xFFD52C36);
             resetWidgetStatusDelayed(context, 3500);
             return;
         }
 
+        // Step 2: Check Credentials
         Db db = new Db(context);
         String[] saved = db.get("WIFI");
         if (saved == null || saved[0] == null || saved[0].trim().isEmpty() || saved[1] == null || saved[1].trim().isEmpty()) {
-            Toast.makeText(context, "No credentials saved. Save Wi-Fi login in R-Login first.", Toast.LENGTH_LONG).show();
+            StatusNotifier.notifyError(context, "No credentials saved");
             updateAllWidgets(context, "No Creds", 0xFFD52C36);
             resetWidgetStatusDelayed(context, 3500);
             return;
         }
 
+        // Step 3: Indicate Connecting
         updateAllWidgets(context, "Connecting...", 0xFF002868);
 
         String user = saved[0];
         String pass = Crypt.dec(saved[1]);
 
+        // Step 4: Login
         Net.loginWifi(context, user, pass, false, (success, message) -> {
             if (success) {
+                StatusNotifier.clearNotification(context);
+                StatusNotifier.vibrate(context, true); // 1-tick
                 updateAllWidgets(context, "Connected!", 0xFF11A677);
                 resetWidgetStatusDelayed(context, 5000);
             } else {
+                String errorMsg = (message != null && !message.isEmpty()) ? message : "Could not reach gateway 172.16.0.20";
+                StatusNotifier.notifyError(context, errorMsg);
                 updateAllWidgets(context, "Failed", 0xFFD52C36);
                 resetWidgetStatusDelayed(context, 4000);
             }

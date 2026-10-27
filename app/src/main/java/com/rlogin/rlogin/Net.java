@@ -34,7 +34,7 @@ public class Net {
     }
 
     public static void loginWifi(Context ctx, String user, String pass, boolean isAuto, WifiLoginCallback callback) {
-        if (!isAuto) {
+        if (!isAuto && callback == null) {
             Toast.makeText(ctx, "Connecting to M-WiFi...", Toast.LENGTH_SHORT).show();
         }
         Executors.newSingleThreadExecutor().execute(() -> {
@@ -88,19 +88,19 @@ public class Net {
                             cm.reportNetworkConnectivity(wifiNetwork, true);
                         }
                     } else if (res.contains("LOGIN") || res.contains("REJECTED")) {
-                        msg = isAuto ? "M-WiFi: Auto-login rejected (check credentials)" : "Login failed: Invalid credentials or rejected";
+                        msg = "Login rejected";
                     } else {
-                        msg = isAuto ? null : "Login failed: Unexpected response";
+                        msg = "Could not reach gateway 172.16.0.20";
                     }
                 }
             } catch (Exception e) {
-                msg = isAuto ? null : "Connection error: " + e.getMessage();
+                msg = isAuto ? null : "Could not reach gateway 172.16.0.20";
             } finally {
                 if (conn != null) {
                     conn.disconnect();
                 }
             }
-            if (msg != null) {
+            if (msg != null && callback == null) {
                 String finalMsg = msg;
                 new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(ctx, finalMsg, Toast.LENGTH_LONG).show());
             }
