@@ -34,6 +34,18 @@
         <activity android:name=".AssignmentActivity" />
         <activity android:name=".SettingsActivity" />
 
+        <!-- Quick Settings Tile for top notification shade (TileService) -->
+        <service
+            android:name=".QuickLoginTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_qs_wifi"
+            android:label="@string/quick_login_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
         <!-- Home Screen 1x1 Quick Connect Widget -->
         <receiver
             android:name=".QuickLoginWidgetProvider"
