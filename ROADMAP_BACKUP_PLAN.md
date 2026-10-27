@@ -14,20 +14,8 @@ This document serves as the master backup plan and sequential execution tracker 
 
 ## Pending Features (Prioritized Queue)
 
-### Item 1: Fast Auto-Connect on Rajagiri Wi-Fi Detection
-- Status: Awaiting User Approval
-- Target Scope:
-  - NetworkCallback listener for sub-second Wi-Fi detection.
-  - Detection of campus gateway (172.16.0.20 / M-WiFi).
-  - Network-bound auto-login (overriding active mobile data).
-  - In-app toggle on dashboard and connection notification.
-- Verification Gate:
-  - Test Wi-Fi connection on campus; verify auto-login fires within 1-2 seconds with mobile data enabled.
-
----
-
-### Item 2: LMS Assignments Tracker Polish & In-App Security
-- Status: Queued (Blocked on Item 1)
+### Item 1: LMS Assignments Tracker Polish & In-App Security
+- Status: Queued (Awaiting User Initiation)
 - Target Scope:
   - Descending sort on Completed tab (latest deadline/completion at top).
   - Hardened IPC: Activities receive only site key ("LMS" / "FEDENA") and decrypt locally inside private memory.
@@ -37,7 +25,7 @@ This document serves as the master backup plan and sequential execution tracker 
 
 ---
 
-### Item 3: Modernization Overhaul
+### Item 2: Modernization Overhaul
 - Status: Long-term Architecture
 - Target Scope:
   - Migrate Db.java from raw SQLiteOpenHelper to Android Room.
@@ -49,6 +37,10 @@ This document serves as the master backup plan and sequential execution tracker 
 ---
 
 ## Completed Features
+
+### Feature: Quick Settings Tile, 1×1 Home Screen Widget & Silent Error Feedback
+- Implemented in: Version 3.0.0
+- Summary: Built native Android Quick Settings Tile (`QuickLoginTileService`) allowing 1-tap captive portal connection directly from the top notification pulldown shade, alongside a 1×1 Home Screen Widget (`QuickLoginWidgetProvider`). Added `StatusNotifier` with dedicated silent notification channel (`rlogin_status_channel`, fixed ID 1001) for crisp, non-cluttering error alerts and tactile haptic vibration (1-tick success, double-buzz failure). Includes background auto-connect via `WifiAutoConnectManager`.
 
 ### Feature: Neo-Brutalist Theme & Dual-Layout Architecture
 - Implemented in: Version 3.0.0

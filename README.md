@@ -20,10 +20,12 @@ If you are a student looking to install and use the app on your Android device:
 
 ## Features
 
-### 1. M-WiFi Background Auto Connect
-- Performs an asynchronous background HTTP POST request to the M-WiFi captive portal (`http://172.16.0.20:8090/login.xml`).
-- Direct network binding via Wi-Fi interface ensuring seamless login even when mobile data is active.
-- Parses XML response payloads (`<status>LIVE</status>`) and displays real-time connection status via Toast notifications without requiring a browser page to remain open.
+### 1. M-WiFi Quick Connect & Captive Portal Engine
+- **Quick Settings Tile (Notification Shade):** Connect to campus Wi-Fi with 1 tap directly from the pulldown top bar (`QuickLoginTileService`), alongside standard toggles like Wi-Fi and Bluetooth. No need to open the app.
+- **Home Screen 1×1 Widget:** A compact desktop button (`QuickLoginWidgetProvider`) on your launcher for instant one-tap connection.
+- **Silent Notifications & Haptic Feedback:** Real-time feedback via `StatusNotifier` with a dedicated silent channel (`rlogin_status_channel`, fixed ID 1001) that updates in-place without notification clutter, paired with tactile vibrations (1 crisp tick on success, double-buzz on failure).
+- **Wi-Fi Handshake Auto-Connect:** Optional background auto-login via `WifiAutoConnectManager` utilizing `ConnectivityManager.NetworkCallback` on Wi-Fi connection.
+- **Direct Network Interface Binding:** Captive portal HTTP POST requests (`http://172.16.0.20:8090/login.xml`) are bound directly to the Wi-Fi interface, ensuring successful login even when mobile data is simultaneously active.
 
 ### 2. Consolidated Attendance Calculator (Fedena Integration)
 - **Native Card View**: Scrapes the student attendance table from Fedena in the background and presents the data in a native Android `RecyclerView` with clear subject cards.
@@ -39,7 +41,7 @@ If you are a student looking to install and use the app on your Android device:
 
 ### 4. Settings Hub & Dynamic Theming Engine
 - **Dedicated Settings Screen**: Accessible from the toolbar gear icon on the main dashboard.
-- **Dual Theme Support**: Switch seamlessly between Classic Navy and Custom Theme.
+- **Dual Theme Support**: Switch seamlessly between Classic Navy and custom Neo-Brutalist themes.
 - **Appearance Switcher**: Choose between System Default, Light Mode, and Dark Mode.
 - **Updates & Release Notes**: Check for updates directly inside the app with integrated release changelog.
 
@@ -60,21 +62,25 @@ If you are a student looking to install and use the app on your Android device:
 
 ```text
 com.rlogin.rlogin/
-├── MainActivity.java        # Main Dashboard with Material 3 Service Cards & Status Badges
-├── SettingsActivity.java    # Settings Hub: Theme selection, Dark Mode toggle, Updates, About
-├── ThemeManager.java        # Centralized theme and night mode manager
-├── AssignmentActivity.java  # Moodle LMS Assignment Tracker with filters & offline cache
-├── AssignmentAdapter.java   # RecyclerView Adapter for assignment cards & countdown badges
-├── AssignmentItem.java      # Data model for assignments with urgency calculation
-├── EditActivity.java        # Credential Vault screen with Outlined Text Inputs & Eye Toggle
-├── WebActivity.java         # Integrated Browser Activity with Top Toolbar & Chrome launcher
-├── ReportActivity.java      # Native Attendance Report Activity with JavaScript DOM parser
-├── ReportAdapter.java       # RecyclerView Adapter for rendering Subject Attendance Cards
-├── SubjectItem.java         # Data Model for subject metrics & calculated totals
-├── GitHubUpdater.java       # In-app background update checker and APK installer
-├── Net.java                 # Wi-Fi network routing & captive portal authentication
-├── Db.java                  # SQLite database manager for credentials & assignment cache
-└── Crypt.java               # Hardware-backed AES-GCM encryption & decryption manager
+├── MainActivity.java            # Main Dashboard with Material 3 Service Cards & Status Badges
+├── SettingsActivity.java        # Settings Hub: Theme selection, Dark Mode toggle, Updates, About
+├── ThemeManager.java            # Centralized theme and night mode manager
+├── QuickLoginTileService.java   # Android Quick Settings Tile for 1-tap shade connection
+├── QuickLoginWidgetProvider.java# 1x1 Home Screen Launcher Widget for 1-tap connection
+├── StatusNotifier.java          # Silent notification dispatcher & tactile haptic manager
+├── WifiAutoConnectManager.java  # ConnectivityManager.NetworkCallback Wi-Fi auto-connect
+├── AssignmentActivity.java      # Moodle LMS Assignment Tracker with filters & offline cache
+├── AssignmentAdapter.java       # RecyclerView Adapter for assignment cards & countdown badges
+├── AssignmentItem.java          # Data model for assignments with urgency calculation
+├── EditActivity.java            # Credential Vault screen with Outlined Text Inputs & Eye Toggle
+├── WebActivity.java             # Integrated Browser Activity with Top Toolbar & Chrome launcher
+├── ReportActivity.java          # Native Attendance Report Activity with JavaScript DOM parser
+├── ReportAdapter.java           # RecyclerView Adapter for rendering Subject Attendance Cards
+├── SubjectItem.java             # Data Model for subject metrics & calculated totals
+├── GitHubUpdater.java           # In-app background update checker and APK installer
+├── Net.java                     # Wi-Fi network routing & captive portal authentication
+├── Db.java                      # SQLite database manager for credentials & assignment cache
+└── Crypt.java                   # Hardware-backed AES-GCM encryption & decryption manager
 ```
 
 ---
@@ -82,10 +88,11 @@ com.rlogin.rlogin/
 ## Tech Stack & Technologies Used
 
 - **Language**: Pure Java
-- **Architecture**: Activity-based Layered Pattern
+- **Architecture**: Activity & Service-based Layered Pattern
+- **System Extensions**: Android Quick Settings (`TileService`), Home Screen AppWidgets (`AppWidgetProvider`, `RemoteViews`), System Notifications (`NotificationCompat`, `NotificationChannel`)
 - **Database**: SQLite (`SQLiteOpenHelper`)
-- **Security**: AES-GCM Encryption + Android KeyStore API
-- **Networking**: `HttpURLConnection` + `WebView` JavaScript Interface (`@JavascriptInterface`)
+- **Security**: Hardware-backed AES-GCM Encryption + Android KeyStore API
+- **Networking**: `HttpURLConnection` + `ConnectivityManager` Network Binding + `WebView` JavaScript Interface (`@JavascriptInterface`)
 - **UI Toolkit**: Google Material 3 Design Components (`MaterialCardView`, `MaterialButtonToggleGroup`, `TextInputLayout`)
 
 ---
