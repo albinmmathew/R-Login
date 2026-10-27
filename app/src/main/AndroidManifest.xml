@@ -34,6 +34,19 @@
         <activity android:name=".AssignmentActivity" />
         <activity android:name=".SettingsActivity" />
 
+        <!-- Home Screen 1x1 Quick Connect Widget -->
+        <receiver
+            android:name=".QuickLoginWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.rlogin.rlogin.ACTION_WIDGET_LOGIN" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_login_info" />
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

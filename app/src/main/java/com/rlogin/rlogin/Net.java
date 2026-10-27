@@ -16,16 +16,30 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 
 public class Net {
+    public interface WifiLoginCallback {
+        void onResult(boolean success, String message);
+    }
+
+    public static boolean isWifiConnected(Context ctx) {
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return findWifiNetwork(cm) != null;
+    }
+
     public static void loginWifi(Context ctx, String user, String pass) {
-        loginWifi(ctx, user, pass, false);
+        loginWifi(ctx, user, pass, false, null);
     }
 
     public static void loginWifi(Context ctx, String user, String pass, boolean isAuto) {
+        loginWifi(ctx, user, pass, isAuto, null);
+    }
+
+    public static void loginWifi(Context ctx, String user, String pass, boolean isAuto, WifiLoginCallback callback) {
         if (!isAuto) {
             Toast.makeText(ctx, "Connecting to M-WiFi...", Toast.LENGTH_SHORT).show();
         }
         Executors.newSingleThreadExecutor().execute(() -> {
             String msg;
+            boolean success = false;
             HttpURLConnection conn = null;
             try {
                 ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -69,6 +83,7 @@ public class Net {
 
                     if (res.contains("LIVE")) {
                         msg = isAuto ? "M-WiFi: Auto-connected!" : "M-WiFi Connected successfully!";
+                        success = true;
                         if (cm != null) {
                             cm.reportNetworkConnectivity(wifiNetwork, true);
                         }
@@ -88,6 +103,11 @@ public class Net {
             if (msg != null) {
                 String finalMsg = msg;
                 new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(ctx, finalMsg, Toast.LENGTH_LONG).show());
+            }
+            if (callback != null) {
+                boolean finalSuccess = success;
+                String finalMsg = msg;
+                new Handler(Looper.getMainLooper()).post(() -> callback.onResult(finalSuccess, finalMsg));
             }
         });
     }
