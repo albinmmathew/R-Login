@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">R-Login</string>
     <string name="action_check_updates">Check for Updates</string>
+    <string name="quick_login_tile_label">M-WiFi</string>
+    <string name="quick_login_widget_name">R-Login Quick Connect</string>
+    <string name="quick_login_widget_desc">One-tap campus Wi-Fi connect button</string>
 </resources>

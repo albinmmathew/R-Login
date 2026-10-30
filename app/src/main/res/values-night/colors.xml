@@ -8,6 +8,12 @@
     <color name="navy_primary_container">#002868</color>
     <color name="navy_on_primary_container">#FFFFFF</color>
 
+    <!-- Badge colors for Classic dialogs -->
+    <color name="badge_classic_bg">#1C2638</color>
+    <color name="badge_classic_text">#80A3D9</color>
+    <color name="badge_latest_bg">#0F3D24</color>
+    <color name="badge_latest_text">#81C995</color>
+
     <!-- Paros Neo-Brutalist Palette (Dark Mode / Inverted Brutalism) -->
     <color name="neo_bg">#141212</color>
     <color name="neo_surface">#221E1E</color>

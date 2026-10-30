@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.rlogin"
+    namespace = "com.rlogin.rlogin"
     compileSdk {
         version = release(37)
     }
@@ -13,11 +13,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.rlogin"
+        applicationId = "com.rlogin.rlogin"
         minSdk = 24
         targetSdk = 37
-        versionCode = 3
-        versionName = "2.1.0"
+        versionCode = 4
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

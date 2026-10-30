@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,6 +17,11 @@
         app:navigationIcon="@drawable/ic_arrow_back"
         app:navigationIconTint="?attr/colorOnSurface"
         app:navigationContentDescription="Back" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorOutlineVariant" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -391,7 +397,7 @@
                                 android:id="@+id/txt_installed_version"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Currently on v2.1.0"
+                                tools:text="Currently on v3.0.0"
                                 android:textSize="12sp"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
                         </LinearLayout>

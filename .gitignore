@@ -37,3 +37,7 @@ secrets.properties
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# Local Release & Signing Documentation
+PLAY_PROTECT_GUIDE.md
+RELEASE_NOTES.md

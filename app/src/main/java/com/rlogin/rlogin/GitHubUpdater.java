@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,9 +14,11 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
 import android.text.Html;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -39,7 +42,7 @@ import java.util.concurrent.Executors;
 public class GitHubUpdater {
     private static final String GITHUB_RELEASES_API = "https://api.github.com/repos/albinmmathew/R-Login/releases/latest";
 
-    private static AlertDialog createNeoDialog(Context context, View view) {
+    public static AlertDialog createThemedDialog(Context context, View view) {
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setView(view)
                 .create();
@@ -47,6 +50,10 @@ public class GitHubUpdater {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
         return dialog;
+    }
+
+    public static AlertDialog createNeoDialog(Context context, View view) {
+        return createThemedDialog(context, view);
     }
 
     public static void checkForUpdates(Context context, boolean showModalImmediately) {
@@ -57,13 +64,21 @@ public class GitHubUpdater {
 
         if (showModalImmediately && context instanceof Activity) {
             ((Activity) context).runOnUiThread(() -> {
-                if (!ThemeManager.isBrutalist(context)) {
-                    Toast.makeText(context, "Checking for updates...", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                View v = LayoutInflater.from(context).inflate(R.layout.dialog_update, null);
+                boolean isBrutalist = ThemeManager.isBrutalist(context);
+                int layoutId = isBrutalist ? R.layout.dialog_update : R.layout.dialog_classic;
+                View v = LayoutInflater.from(context).inflate(layoutId, null);
                 dialogView[0] = v;
-                liveDialog[0] = createNeoDialog(context, v);
+                liveDialog[0] = createThemedDialog(context, v);
+
+                ImageView imgIcon = v.findViewById(R.id.img_icon);
+                if (imgIcon != null) {
+                    imgIcon.setImageResource(R.drawable.ic_update);
+                    if (!isBrutalist) {
+                        TypedValue val = new TypedValue();
+                        context.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorPrimary, val, true);
+                        imgIcon.setImageTintList(ColorStateList.valueOf(val.data));
+                    }
+                }
 
                 TextView title = v.findViewById(R.id.txt_dialog_title);
                 TextView curVer = v.findViewById(R.id.badge_current_version);
@@ -72,13 +87,18 @@ public class GitHubUpdater {
                 Button btnNeg = v.findViewById(R.id.btn_negative);
                 Button btnPos = v.findViewById(R.id.btn_positive);
 
-                title.setText("CHECK FOR UPDATES");
-                curVer.setText("v" + currentVersion);
-                progress.setVisibility(View.VISIBLE);
-                statusMsg.setText("CHECKING GITHUB RELEASES...");
-                btnNeg.setText("CANCEL");
-                btnNeg.setOnClickListener(view -> liveDialog[0].dismiss());
-                btnPos.setVisibility(View.GONE);
+                if (title != null) title.setText(isBrutalist ? "CHECK FOR UPDATES" : "Check for Updates");
+                if (curVer != null) curVer.setText("v" + currentVersion);
+                if (progress != null) progress.setVisibility(View.VISIBLE);
+                if (statusMsg != null) {
+                    statusMsg.setVisibility(View.VISIBLE);
+                    statusMsg.setText(isBrutalist ? "CHECKING GITHUB RELEASES..." : "Checking GitHub releases...");
+                }
+                if (btnNeg != null) {
+                    btnNeg.setText(isBrutalist ? "CANCEL" : "Cancel");
+                    btnNeg.setOnClickListener(view -> liveDialog[0].dismiss());
+                }
+                if (btnPos != null) btnPos.setVisibility(View.GONE);
 
                 liveDialog[0].show();
             });
@@ -129,25 +149,10 @@ public class GitHubUpdater {
                         db.saveReleaseCache("PENDING", tagName, body, finalApkUrl);
                         if (context instanceof Activity) {
                             ((Activity) context).runOnUiThread(() -> {
-                                if (ThemeManager.isBrutalist(context)) {
-                                    if (liveDialog[0] != null && liveDialog[0].isShowing()) {
-                                        populateUpdateDialog(context, dialogView[0], liveDialog[0], tagName, body, finalApkUrl);
-                                    } else {
-                                        showUpdateDialog(context, tagName, body, finalApkUrl, currentVersion);
-                                    }
+                                if (liveDialog[0] != null && liveDialog[0].isShowing() && dialogView[0] != null) {
+                                    populateUpdateDialog(context, dialogView[0], liveDialog[0], tagName, body, finalApkUrl);
                                 } else {
-                                    CharSequence formattedNotes = formatMarkdown(body.isEmpty() ?
-                                            "A new release (" + tagName + ") is available for R-Login. Would you like to download and install it?" : body);
-                                    AlertDialog dialog = new AlertDialog.Builder(context)
-                                            .setTitle("New Update Available (" + tagName + ")")
-                                            .setMessage(formattedNotes)
-                                            .setPositiveButton("Download & Install", (d, which) -> startApkDownload(context, finalApkUrl))
-                                            .setNegativeButton("Later", null)
-                                            .show();
-                                    TextView messageView = dialog.findViewById(android.R.id.message);
-                                    if (messageView != null) {
-                                        messageView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
-                                    }
+                                    showUpdateDialog(context, tagName, body, finalApkUrl, currentVersion);
                                 }
                             });
                         }
@@ -157,18 +162,25 @@ public class GitHubUpdater {
                         db.clearPendingRelease();
                         if (showModalImmediately && context instanceof Activity) {
                             ((Activity) context).runOnUiThread(() -> {
-                                if (ThemeManager.isBrutalist(context)) {
-                                    if (dialogView[0] != null) {
-                                        View v = dialogView[0];
-                                        v.findViewById(R.id.progress_checking).setVisibility(View.GONE);
-                                        TextView statusMsg = v.findViewById(R.id.txt_status_message);
-                                        statusMsg.setText("YOU ARE ON THE LATEST VERSION!\nv" + currentVersion + " is up to date.");
-                                        Button btnNeg = v.findViewById(R.id.btn_negative);
-                                        btnNeg.setText("CLOSE");
-                                        v.findViewById(R.id.btn_positive).setVisibility(View.GONE);
+                                boolean isBrutalist = ThemeManager.isBrutalist(context);
+                                if (dialogView[0] != null) {
+                                    View v = dialogView[0];
+                                    ProgressBar progress = v.findViewById(R.id.progress_checking);
+                                    if (progress != null) progress.setVisibility(View.GONE);
+
+                                    TextView statusMsg = v.findViewById(R.id.txt_status_message);
+                                    if (statusMsg != null) {
+                                        statusMsg.setVisibility(View.VISIBLE);
+                                        statusMsg.setText(isBrutalist ?
+                                                "YOU ARE ON THE LATEST VERSION!\nv" + currentVersion + " is up to date." :
+                                                "You are on the latest version!\nv" + currentVersion + " is up to date.");
                                     }
-                                } else {
-                                    Toast.makeText(context, "You are on the latest version (" + currentVersion + ")", Toast.LENGTH_SHORT).show();
+
+                                    Button btnNeg = v.findViewById(R.id.btn_negative);
+                                    if (btnNeg != null) btnNeg.setText(isBrutalist ? "CLOSE" : "Close");
+
+                                    View btnPos = v.findViewById(R.id.btn_positive);
+                                    if (btnPos != null) btnPos.setVisibility(View.GONE);
                                 }
                             });
                         }
@@ -176,16 +188,25 @@ public class GitHubUpdater {
                 } else if (showModalImmediately) {
                     if (context instanceof Activity) {
                         ((Activity) context).runOnUiThread(() -> {
-                            if (ThemeManager.isBrutalist(context)) {
-                                if (dialogView[0] != null) {
-                                    View v = dialogView[0];
-                                    v.findViewById(R.id.progress_checking).setVisibility(View.GONE);
-                                    TextView statusMsg = v.findViewById(R.id.txt_status_message);
-                                    statusMsg.setText("COULD NOT REACH GITHUB.\nPlease try again later.");
-                                    Button btnNeg = v.findViewById(R.id.btn_negative);
-                                    btnNeg.setText("CLOSE");
-                                    v.findViewById(R.id.btn_positive).setVisibility(View.GONE);
+                            boolean isBrutalist = ThemeManager.isBrutalist(context);
+                            if (dialogView[0] != null) {
+                                View v = dialogView[0];
+                                ProgressBar progress = v.findViewById(R.id.progress_checking);
+                                if (progress != null) progress.setVisibility(View.GONE);
+
+                                TextView statusMsg = v.findViewById(R.id.txt_status_message);
+                                if (statusMsg != null) {
+                                    statusMsg.setVisibility(View.VISIBLE);
+                                    statusMsg.setText(isBrutalist ?
+                                            "COULD NOT REACH GITHUB.\nPlease try again later." :
+                                            "Could not reach GitHub.\nPlease check your connection and try again.");
                                 }
+
+                                Button btnNeg = v.findViewById(R.id.btn_negative);
+                                if (btnNeg != null) btnNeg.setText(isBrutalist ? "CLOSE" : "Close");
+
+                                View btnPos = v.findViewById(R.id.btn_positive);
+                                if (btnPos != null) btnPos.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(context, "Unable to check for updates right now.", Toast.LENGTH_SHORT).show();
                             }
@@ -196,16 +217,25 @@ public class GitHubUpdater {
             } catch (Exception e) {
                 if (showModalImmediately && context instanceof Activity) {
                     ((Activity) context).runOnUiThread(() -> {
-                        if (ThemeManager.isBrutalist(context)) {
-                            if (dialogView[0] != null) {
-                                View v = dialogView[0];
-                                v.findViewById(R.id.progress_checking).setVisibility(View.GONE);
-                                TextView statusMsg = v.findViewById(R.id.txt_status_message);
-                                statusMsg.setText("UPDATE CHECK FAILED\n" + e.getLocalizedMessage());
-                                Button btnNeg = v.findViewById(R.id.btn_negative);
-                                btnNeg.setText("CLOSE");
-                                v.findViewById(R.id.btn_positive).setVisibility(View.GONE);
+                        boolean isBrutalist = ThemeManager.isBrutalist(context);
+                        if (dialogView[0] != null) {
+                            View v = dialogView[0];
+                            ProgressBar progress = v.findViewById(R.id.progress_checking);
+                            if (progress != null) progress.setVisibility(View.GONE);
+
+                            TextView statusMsg = v.findViewById(R.id.txt_status_message);
+                            if (statusMsg != null) {
+                                statusMsg.setVisibility(View.VISIBLE);
+                                statusMsg.setText(isBrutalist ?
+                                        "UPDATE CHECK FAILED\n" + e.getLocalizedMessage() :
+                                        "Update check failed:\n" + e.getLocalizedMessage());
                             }
+
+                            Button btnNeg = v.findViewById(R.id.btn_negative);
+                            if (btnNeg != null) btnNeg.setText(isBrutalist ? "CLOSE" : "Close");
+
+                            View btnPos = v.findViewById(R.id.btn_positive);
+                            if (btnPos != null) btnPos.setVisibility(View.GONE);
                         } else {
                             Toast.makeText(context, "Update check failed: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -236,43 +266,88 @@ public class GitHubUpdater {
     }
 
     private static void populateUpdateDialog(Context context, View v, AlertDialog dialog, String tagName, String changelog, String apkUrl) {
-        v.findViewById(R.id.progress_checking).setVisibility(View.GONE);
+        boolean isBrutalist = ThemeManager.isBrutalist(context);
+
+        ProgressBar progress = v.findViewById(R.id.progress_checking);
+        if (progress != null) progress.setVisibility(View.GONE);
+
         TextView title = v.findViewById(R.id.txt_dialog_title);
-        title.setText("UPDATE AVAILABLE");
+        if (title != null) title.setText(isBrutalist ? "UPDATE AVAILABLE" : "Update Available");
 
         TextView latestVer = v.findViewById(R.id.badge_latest_version);
-        latestVer.setText(tagName);
-        latestVer.setVisibility(View.VISIBLE);
+        if (latestVer != null) {
+            latestVer.setText(tagName);
+            latestVer.setVisibility(View.VISIBLE);
+        }
 
         TextView statusMsg = v.findViewById(R.id.txt_status_message);
-        statusMsg.setText("NEW VERSION IS READY!");
+        if (statusMsg != null) {
+            statusMsg.setVisibility(View.VISIBLE);
+            statusMsg.setText(isBrutalist ? "NEW VERSION IS READY!" : "A new version of R-Login is ready!");
+        }
 
-        if (!changelog.isEmpty()) {
-            ScrollView scroll = v.findViewById(R.id.scroll_changelog);
-            TextView txtChangelog = v.findViewById(R.id.txt_changelog);
+        ScrollView scroll = v.findViewById(R.id.scroll_changelog);
+        TextView txtChangelog = v.findViewById(R.id.txt_changelog);
+        if (!changelog.isEmpty() && scroll != null && txtChangelog != null) {
             txtChangelog.setText(formatMarkdown(changelog));
+            txtChangelog.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+            if (isBrutalist) {
+                txtChangelog.setTextColor(ContextCompat.getColor(context, R.color.neo_ink));
+                txtChangelog.setLinkTextColor(ContextCompat.getColor(context, R.color.neo_brand));
+            } else {
+                TypedValue val = new TypedValue();
+                context.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorPrimary, val, true);
+                txtChangelog.setLinkTextColor(val.data);
+            }
             scroll.setVisibility(View.VISIBLE);
         }
 
         Button btnNeg = v.findViewById(R.id.btn_negative);
-        btnNeg.setText("LATER");
-        btnNeg.setOnClickListener(view -> dialog.dismiss());
+        if (btnNeg != null) {
+            btnNeg.setText(isBrutalist ? "LATER" : "Later");
+            btnNeg.setOnClickListener(view -> dialog.dismiss());
+        }
 
         Button btnPos = v.findViewById(R.id.btn_positive);
-        btnPos.setText("DOWNLOAD & INSTALL →");
-        btnPos.setVisibility(View.VISIBLE);
-        btnPos.setOnClickListener(view -> {
-            dialog.dismiss();
-            startApkDownload(context, apkUrl);
+        if (btnPos != null) {
+            btnPos.setText(isBrutalist ? "DOWNLOAD & INSTALL →" : "Download & Install →");
+            btnPos.setVisibility(View.VISIBLE);
+            btnPos.setOnClickListener(view -> {
+                dialog.dismiss();
+                startApkDownload(context, apkUrl);
+            });
+        }
+
+        dialog.setOnShowListener(d -> {
+            if (scroll != null && context instanceof Activity) {
+                int screenHeight = ((Activity) context).getResources().getDisplayMetrics().heightPixels;
+                int maxHeight = Math.max((int) (screenHeight * 0.52f), (int) (320 * context.getResources().getDisplayMetrics().density));
+                if (scroll.getHeight() > maxHeight) {
+                    scroll.getLayoutParams().height = maxHeight;
+                    scroll.requestLayout();
+                }
+            }
         });
     }
 
     private static void showUpdateDialog(Context context, String tagName, String changelog, String apkUrl, String currentVersion) {
-        View v = LayoutInflater.from(context).inflate(R.layout.dialog_update, null);
-        AlertDialog dialog = createNeoDialog(context, v);
+        boolean isBrutalist = ThemeManager.isBrutalist(context);
+        int layoutId = isBrutalist ? R.layout.dialog_update : R.layout.dialog_classic;
+        View v = LayoutInflater.from(context).inflate(layoutId, null);
+        AlertDialog dialog = createThemedDialog(context, v);
+
+        ImageView imgIcon = v.findViewById(R.id.img_icon);
+        if (imgIcon != null) {
+            imgIcon.setImageResource(R.drawable.ic_update);
+            if (!isBrutalist) {
+                TypedValue val = new TypedValue();
+                context.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorPrimary, val, true);
+                imgIcon.setImageTintList(ColorStateList.valueOf(val.data));
+            }
+        }
 
         TextView curVer = v.findViewById(R.id.badge_current_version);
-        curVer.setText("v" + currentVersion);
+        if (curVer != null) curVer.setText("v" + currentVersion);
 
         populateUpdateDialog(context, v, dialog, tagName, changelog, apkUrl);
         dialog.show();
@@ -287,15 +362,17 @@ public class GitHubUpdater {
         for (String line : lines) {
             String trimmed = line.trim();
             if (trimmed.startsWith("### ")) {
-                html.append("<br><b><font color='#002868'>").append(trimmed.substring(4)).append("</font></b><br>");
+                html.append("<br><b>").append(trimmed.substring(4)).append("</b><br>");
             } else if (trimmed.startsWith("## ")) {
                 html.append("<br><b><big>").append(trimmed.substring(3)).append("</big></b><br>");
             } else if (trimmed.startsWith("# ")) {
-                html.append("<b><big>").append(trimmed.substring(2)).append("</big></b><br>");
+                html.append("<b><big><big>").append(trimmed.substring(2)).append("</big></big></b><br>");
             } else if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
                 html.append("&nbsp;&nbsp;•&nbsp;").append(trimmed.substring(2)).append("<br>");
             } else if (!trimmed.isEmpty()) {
                 html.append(trimmed).append("<br>");
+            } else {
+                html.append("<br>");
             }
         }
         String processed = html.toString()
@@ -313,23 +390,42 @@ public class GitHubUpdater {
     public static void startApkDownload(Context context, String apkUrl) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!context.getPackageManager().canRequestPackageInstalls()) {
-                if (ThemeManager.isBrutalist(context)) {
-                    View v = LayoutInflater.from(context).inflate(R.layout.dialog_update, null);
-                    AlertDialog dialog = createNeoDialog(context, v);
+                boolean isBrutalist = ThemeManager.isBrutalist(context);
+                int layoutId = isBrutalist ? R.layout.dialog_update : R.layout.dialog_classic;
+                View v = LayoutInflater.from(context).inflate(layoutId, null);
+                AlertDialog dialog = createThemedDialog(context, v);
 
-                    TextView title = v.findViewById(R.id.txt_dialog_title);
-                    title.setText("PERMISSION REQUIRED");
-                    v.findViewById(R.id.progress_checking).setVisibility(View.GONE);
+                ImageView imgIcon = v.findViewById(R.id.img_icon);
+                if (imgIcon != null) {
+                    imgIcon.setImageResource(R.drawable.ic_lock);
+                    if (!isBrutalist) {
+                        TypedValue val = new TypedValue();
+                        context.getTheme().resolveAttribute(androidx.appcompat.R.attr.colorPrimary, val, true);
+                        imgIcon.setImageTintList(ColorStateList.valueOf(val.data));
+                    }
+                }
 
-                    TextView statusMsg = v.findViewById(R.id.txt_status_message);
+                TextView title = v.findViewById(R.id.txt_dialog_title);
+                if (title != null) title.setText(isBrutalist ? "PERMISSION REQUIRED" : "Permission Required");
+
+                ProgressBar progress = v.findViewById(R.id.progress_checking);
+                if (progress != null) progress.setVisibility(View.GONE);
+
+                TextView statusMsg = v.findViewById(R.id.txt_status_message);
+                if (statusMsg != null) {
+                    statusMsg.setVisibility(View.VISIBLE);
                     statusMsg.setText("To install the update, please enable 'Install unknown apps' for R-Login in Android Settings.");
+                }
 
-                    Button btnNeg = v.findViewById(R.id.btn_negative);
-                    btnNeg.setText("CANCEL");
+                Button btnNeg = v.findViewById(R.id.btn_negative);
+                if (btnNeg != null) {
+                    btnNeg.setText(isBrutalist ? "CANCEL" : "Cancel");
                     btnNeg.setOnClickListener(view -> dialog.dismiss());
+                }
 
-                    Button btnPos = v.findViewById(R.id.btn_positive);
-                    btnPos.setText("OPEN SETTINGS →");
+                Button btnPos = v.findViewById(R.id.btn_positive);
+                if (btnPos != null) {
+                    btnPos.setText(isBrutalist ? "OPEN SETTINGS →" : "Open Settings →");
                     btnPos.setVisibility(View.VISIBLE);
                     btnPos.setOnClickListener(view -> {
                         dialog.dismiss();
@@ -337,20 +433,9 @@ public class GitHubUpdater {
                         intent.setData(Uri.parse("package:" + context.getPackageName()));
                         context.startActivity(intent);
                     });
-
-                    dialog.show();
-                } else {
-                    new AlertDialog.Builder(context)
-                            .setTitle("Permission Required")
-                            .setMessage("To install the update directly, please allow R-Login to install unknown apps.")
-                            .setPositiveButton("Settings", (dialog, which) -> {
-                                Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-                                intent.setData(Uri.parse("package:" + context.getPackageName()));
-                                context.startActivity(intent);
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .show();
                 }
+
+                dialog.show();
                 return;
             }
         }
@@ -423,3 +508,4 @@ public class GitHubUpdater {
         }
     }
 }
+

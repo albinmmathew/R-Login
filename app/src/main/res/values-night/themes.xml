@@ -10,6 +10,8 @@
         <item name="colorOnSurface">#FFFFFF</item>
         <item name="colorSurfaceVariant">#1C2638</item>
         <item name="colorOnSurfaceVariant">#CCCCCC</item>
+        <item name="colorOutline">#4080A3D9</item>
+        <item name="colorOutlineVariant">#26FFFFFF</item>
 
         <!-- Dark Mode Status Bar Configuration -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>

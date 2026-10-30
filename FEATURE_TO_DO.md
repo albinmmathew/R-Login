@@ -6,18 +6,7 @@ This document tracks upcoming plans, enhancements, and prioritized features for 
 
 ## Pending Features (Prioritized Order)
 
-### 1. Fast Auto-Connect on Rajagiri Wi-Fi Detection
-- **Objective:** Automatically detect connection to campus Wi-Fi and execute the captive portal login protocol in milliseconds without opening the app or draining battery.
-- **Planned Changes:**
-  - **NetworkCallback Listener:** Register a system callback using `ConnectivityManager.NetworkCallback` requesting `TRANSPORT_WIFI` (modern Android 10+ standard).
-  - **Campus Gateway Recognition:** Detect campus gateway IP (`172.16.0.20:8090`) or SSID (`M-WiFi`).
-  - **Network-Bound Protocol:** Trigger `Net.loginWifi()` through the bound Wi-Fi interface so login succeeds even when mobile data is on.
-  - **User Controls & Notifications:** In-app toggle on the dashboard to enable/disable auto-login, with a discreet notification upon successful connection.
-  - **Quick Settings Tile (Optional):** Notification shade tile for 1-tap connection.
-
----
-
-### 2. Moodle LMS Assignments Tracker Polish & In-App Security
+### 1. Moodle LMS Assignments Tracker Polish & In-App Security
 - **Objective:** Refine assignment list ordering and harden inter-activity credential passing.
 - **Planned Changes:**
   - **Descending Sort for Completed Tab:** In the Completed tab, sort items in descending order so the most recently completed or latest deadline items appear at the top instead of the bottom.
@@ -25,7 +14,7 @@ This document tracks upcoming plans, enhancements, and prioritized features for 
 
 ---
 
-### 3. Modernization & Architecture Upgrades
+### 2. Modernization & Architecture Upgrades
 - **Objective:** Clean up technical debt and migrate to modern Android Jetpack standards.
 - **Planned Changes:**
   - **SQLiteOpenHelper to Room:** Migrate `Db.java` to Android Room for compile-time verified database operations.
@@ -36,8 +25,20 @@ This document tracks upcoming plans, enhancements, and prioritized features for 
 
 ## Completed Features
 
+### Feature: Quick Settings Tile, 1×1 Home Screen Widget & Silent Error Feedback
+- **Implemented in:** Version 3.0.0
+- **Summary:** Built native Android Quick Settings Tile (`QuickLoginTileService`) allowing 1-tap captive portal connection directly from the top notification pulldown shade, alongside a 1×1 Home Screen Widget (`QuickLoginWidgetProvider`). Added `StatusNotifier` with dedicated silent notification channel (`rlogin_status_channel`, fixed ID 1001) for crisp, non-cluttering error alerts and tactile haptic vibration (1-tick success, double-buzz failure). Includes background auto-connect via `WifiAutoConnectManager`.
+
+### Feature: Neo-Brutalist Theme & Dual-Layout Architecture
+- **Implemented in:** Version 3.0.0
+- **Summary:** Added complete Neo-Brutalist design system designed by Shyam James (@shyamjames) with bold typography, solid ink borders, hard drop shadows, and custom light and dark color palettes. Integrated dynamic layout switching across all core activities and added an inline password visibility toggle in the Credential Vault matching the Neo-Brutalist aesthetic.
+
+### Feature: Application Identity Migration & Package Renaming
+- **Implemented in:** Version 3.0.0
+- **Summary:** Migrated Android application namespace and package ID from com.example.rlogin to production identifier com.rlogin.rlogin. Upgraded build configuration to versionCode 4 and versionName 3.0.0 for major milestone release.
+
 ### Feature: 2-Slot Release Notes Caching & Markdown Rich-Text Formatter
-- **Implemented in:** Version 2.1.1 (Target Release)
+- **Implemented in:** Version 3.0.0
 - **Summary:** Built a 2-slot self-pruning SQLite table (release_cache) that caches CURRENT and PENDING releases with an automatic promotion-on-launch lifecycle. Created GitHubUpdater.formatMarkdown to convert raw GitHub markdown into styled rich text with bold section titles, bullet points, and zero raw hashtag symbols in update and What's New dialogs.
 
 ### Feature: Settings Hub, Theming Engine & Updates Center

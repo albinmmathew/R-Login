@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

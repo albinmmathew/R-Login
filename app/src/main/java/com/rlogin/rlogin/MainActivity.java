@@ -1,4 +1,4 @@
-package com.example.rlogin;
+package com.rlogin.rlogin;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -17,10 +17,12 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 public class MainActivity extends AppCompatActivity {
     private Db db;
     private String appliedTheme;
+    private MaterialSwitch switchAutoWifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +45,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(ThemeManager.isBrutalist(this) ? R.layout.activity_main_brutalist : R.layout.activity_main);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayShowTitleEnabled(false);
-            }
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         db = new Db(this);
@@ -84,6 +84,25 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("user", saved[0]);
                 i.putExtra("pass", Crypt.dec(saved[1]));
                 startActivity(i);
+            });
+        }
+
+        // Initialize and bind auto-login toggle
+        WifiAutoConnectManager.init(this);
+        switchAutoWifi = findViewById(R.id.switch_auto_wifi);
+        if (switchAutoWifi != null) {
+            switchAutoWifi.setChecked(WifiAutoConnectManager.isAutoLoginEnabled(this));
+            switchAutoWifi.setOnCheckedChangeListener((btn, isChecked) -> {
+                String[] saved = db.get("WIFI");
+                if (isChecked && (saved == null || saved[0].isEmpty() || saved[1].isEmpty())) {
+                    Toast.makeText(this, "Setup WIFI credentials first", Toast.LENGTH_SHORT).show();
+                    switchAutoWifi.setChecked(false);
+                    return;
+                }
+                WifiAutoConnectManager.setAutoLoginEnabled(this, isChecked);
+                if (isChecked) {
+                    Toast.makeText(this, "Auto-login enabled: connects when on campus Wi-Fi", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
@@ -128,6 +147,14 @@ public class MainActivity extends AppCompatActivity {
         updateStatus("WIFI", R.id.status_wifi);
         updateStatus("FEDENA", R.id.status_fedena);
         updateStatus("LMS", R.id.status_lms);
+
+        if (switchAutoWifi != null && WifiAutoConnectManager.isAutoLoginEnabled(this)) {
+            String[] saved = db.get("WIFI");
+            if (saved == null || saved[0].isEmpty() || saved[1].isEmpty()) {
+                switchAutoWifi.setChecked(false);
+                WifiAutoConnectManager.setAutoLoginEnabled(this, false);
+            }
+        }
     }
 
     private void updateStatus(String site, int statusId) {
